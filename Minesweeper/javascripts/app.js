@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 //set as desired.
 var num_of_rows = 5;
@@ -9,7 +9,7 @@ var table = document.getElementById('play_area');
 initializePlayArea(table, num_of_cols, num_of_rows);
 
 
-function initializePlayArea(table, num_of_cols = 10, num_of_rows = 20){
+function initializePlayArea(table, num_of_cols, num_of_rows){
 
     //adding rows and columns.
     for(var i = 0; i<num_of_rows; i++){
@@ -26,15 +26,8 @@ function initializePlayArea(table, num_of_cols = 10, num_of_rows = 20){
     }
 }
 
-
-function testFunc(id){
-    console.log('ID is: ' + id);
-}
-
-
-//arrow functions in es6! =>
-document.querySelectorAll('.table-cell').forEach(item => {
-    item.addEventListener('click', event => {
+document.querySelectorAll('.table-cell').forEach(function(item){
+    item.addEventListener('click', function(event){
         console.log('ID is: ' + item.id);
-    })
-  })
+    });
+  });
