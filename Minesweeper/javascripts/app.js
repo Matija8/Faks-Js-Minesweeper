@@ -8,6 +8,25 @@ var num_of_cols = 7;
 var table = document.getElementById('play_area');
 initializePlayArea(table, num_of_cols, num_of_rows);
 
+setMine('0,1');
+
+
+document.querySelectorAll('.table-cell').forEach(function(item){
+    item.addEventListener('click', function(event){
+        console.log('ID is: ' + item.id);
+        item.innerHTML = 'o';
+        if(item.getAttribute('has-mine') == true){
+            ('Cell: ' + item.id + ' has a mine!')
+            item.innerHTML = 'x';
+        }
+    });
+});
+
+
+
+
+
+//Function definitions
 
 function initializePlayArea(table, num_of_cols, num_of_rows){
 
@@ -17,17 +36,17 @@ function initializePlayArea(table, num_of_cols, num_of_rows){
 
         for(var j = 0; j<num_of_cols; j++){
             var table_cell = document.createElement('td');
-            table_cell.innerHTML = i + ',' + j;
+            //table_cell.innerHTML = i + ',' + j;
             table_cell.classList.add('table-cell');
             table_cell.setAttribute('id' , i + ',' + j);
+            table_cell.setAttribute('has-mine', false);
             table_row.appendChild(table_cell);
         }
         table.appendChild(table_row);
     }
 }
 
-document.querySelectorAll('.table-cell').forEach(function(item){
-    item.addEventListener('click', function(event){
-        console.log('ID is: ' + item.id);
-    });
-  });
+function setMine(id){
+    var cell = document.getElementById(id);
+    cell.setAttribute('has-mine', true);
+}
