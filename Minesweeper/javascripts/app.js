@@ -1,26 +1,35 @@
 'use strict';
 
+
 //set as desired.
 var num_of_rows = 5;
 var num_of_cols = 7;
+
 
 //get the game area (table).
 var table = document.getElementById('play_area');
 initializePlayArea(table, num_of_cols, num_of_rows);
 
-setMine('0,1');
 
-
+//add event listeners
 document.querySelectorAll('.table-cell').forEach(function(item){
     item.addEventListener('click', function(event){
         console.log('ID is: ' + item.id);
-        item.innerHTML = 'o';
-        if(item.getAttribute('has-mine') == true){
-            ('Cell: ' + item.id + ' has a mine!')
+        console.log(item.getAttribute('has-mine'));
+        if(item.getAttribute('has-mine') == true){  //bug! nije se jos set-ovala mina? izvaditi f-ju?
+            alert('Cell: ' + item.id + ' has a mine!');
             item.innerHTML = 'x';
+        } else {
+            item.innerHTML = 'o';
         }
     });
 });
+
+
+setMine('0,1');
+
+
+
 
 
 
@@ -29,11 +38,10 @@ document.querySelectorAll('.table-cell').forEach(function(item){
 //Function definitions
 
 function initializePlayArea(table, num_of_cols, num_of_rows){
-
-    //adding rows and columns.
+    //adding rows.
     for(var i = 0; i<num_of_rows; i++){
         var table_row = document.createElement('tr');
-
+        //adding columns(cells).
         for(var j = 0; j<num_of_cols; j++){
             var table_cell = document.createElement('td');
             //table_cell.innerHTML = i + ',' + j;
