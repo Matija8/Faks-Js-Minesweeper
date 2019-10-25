@@ -2,8 +2,8 @@
 
 
 //Initial play area dimensions. Set as desired.
-var numOfRows = 5;
-var numOfCols = 7;
+var numOfRows = 15;
+var numOfCols = 12;
 
 
 //Get the game area (table).
@@ -15,20 +15,13 @@ var cellMatrix = initializePlayArea(table, numOfCols, numOfRows);
 //Add event listeners.
 document.querySelectorAll('.table-cell').forEach(function(item){
     item.addEventListener('click', function(event){
-        //console.log('ID is: ' + item.id);
-        //console.log(item.getAttribute('has-a-mine'));
-        if(item.getAttribute('has-a-mine') === 'MINE!'){
-            alert('Cell: ' + item.id + ' has a mine! Sorry, you lost :(');
-            item.innerHTML = 'X';
-        } else {
-            //TODO Doesn't work for cols/rows > 9! Implement parse untill ','.
-            item.innerHTML = countMines(parseInt(item.id[0]), parseInt(item.id[2]));
-        }
+        leftClickCell(item, event)
     });
 });
 
 
 setMine(0, 1, cellMatrix);
+setMine(0, 2, cellMatrix);
 //TODO Set random mines (var numOfMines=...).
 //TODO Set timer till completion.
 
@@ -41,14 +34,14 @@ function initializePlayArea(table, numOfCols, numOfRows){
     //Adding rows.
     var rows = [];
     for(var i = 0; i<numOfRows; i++){
-        var tableRow = document.createElement('tr');
-        var cells = [];
+        var tableRow = document.createElement('tr'),
+        cells = [];
         //Adding columns(cells).
         for(var j = 0; j<numOfCols; j++){
             var tableCell = document.createElement('td');
             tableCell.classList.add('table-cell');
             tableCell.setAttribute('id' , i + ',' + j);
-            tableCell.setAttribute('has-a-mine', 'no-mine');
+            //tableCell.setAttribute('has-a-mine', 'no-mine');
             tableRow.appendChild(tableCell);
             cells.push([i, j, 'no-mine']);
         }
@@ -62,22 +55,19 @@ function initializePlayArea(table, numOfCols, numOfRows){
 
 function setMine(row, col, cellMatrix){
     var cell = document.getElementById(row + "," + col);
-    cell.setAttribute('has-a-mine', 'MINE!');
+    //cell.setAttribute('has-a-mine', 'MINE!');
     cellMatrix[row][col][2] = 'MINE!';
     //console.log(cellMatrix[row][col]);
 }
 
 
 function countMines(row, col){
-    //console.log('entered countMines');
-    //console.log(numOfRows)
-    console.log('row:' + (row+1) + ', col: ' + (col+1));
+    //console.log('row:' + (row) + ', col: ' + (col));
     
     var leftCheck = (col == 0) ? col : col-1;
-    var rightCheck = (col == numOfCols) ? col : col+1;
+    var rightCheck = (col == numOfCols-1) ? col : col+1;
     var topCheck = (row == 0) ? row : row-1;
-    var bottomCheck = (row == numOfRows) ? row : row+1;
-    //console.log(leftCheck.toString() + rightCheck + topCheck + bottomCheck);
+    var bottomCheck = (row == numOfRows-1) ? row : row+1;
 
     var localMines = 0;
     for(var i = topCheck; i<=bottomCheck; i++){
@@ -85,7 +75,7 @@ function countMines(row, col){
             if(i === row && j === col){ //remove this check?
                 continue;
             }
-            console.log(cellMatrix[i][j]);
+            //console.log(cellMatrix[i][j]);
             if(cellMatrix[i][j][2] === 'MINE!'){
                 localMines++;
             }
@@ -93,4 +83,27 @@ function countMines(row, col){
     }
 
     return localMines;
+}
+
+function leftClickCell(item, event){
+    var id = item.id,
+    row = parseInt(id.substring(
+        0, id.indexOf(',')
+    )),
+    col = parseInt(id.substring(
+        id.indexOf(',')+1, id.length
+    ));
+    //console.log(cellMatrix[row][col]);
+    if(cellMatrix[row][col][2] === 'MINE!'){
+        item.innerHTML = 'X';
+        alert('Cell: ' + id + ' has a mine! Sorry, you lost :(');
+    } else {
+        //console.log('id: ' + id);
+        //console.log('' + row + col);
+        item.innerHTML = countMines(row, col);
+    }
+}
+
+function setRandomMines(){
+    //
 }
