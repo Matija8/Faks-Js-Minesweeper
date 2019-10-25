@@ -2,8 +2,8 @@
 
 
 //Initial play area dimensions. Set as desired.
-var numOfRows = 15;
-var numOfCols = 12;
+var numOfRows = 5;
+var numOfCols = 7;
 
 
 //Get the game area (table).
@@ -22,6 +22,7 @@ document.querySelectorAll('.table-cell').forEach(function(item){
 
 setMine(0, 1, cellMatrix);
 setMine(0, 2, cellMatrix);
+setRandomMines(1, [0,3]);
 //TODO Set random mines (var numOfMines=...).
 //TODO Set timer till completion.
 
@@ -41,12 +42,10 @@ function initializePlayArea(table, numOfCols, numOfRows){
             var tableCell = document.createElement('td');
             tableCell.classList.add('table-cell');
             tableCell.setAttribute('id' , i + ',' + j);
-            //tableCell.setAttribute('has-a-mine', 'no-mine');
             tableRow.appendChild(tableCell);
             cells.push([i, j, 'no-mine']);
         }
         table.appendChild(tableRow);
-        //console.log(rows);//TODO Comment this line when done.
         rows.push(cells);
     }
     return rows;
@@ -55,14 +54,13 @@ function initializePlayArea(table, numOfCols, numOfRows){
 
 function setMine(row, col, cellMatrix){
     var cell = document.getElementById(row + "," + col);
-    //cell.setAttribute('has-a-mine', 'MINE!');
     cellMatrix[row][col][2] = 'MINE!';
     //console.log(cellMatrix[row][col]);
 }
 
 
 function countMines(row, col){
-    //console.log('row:' + (row) + ', col: ' + (col));
+    console.log('row:' + (row) + ', col: ' + (col));
     
     var leftCheck = (col == 0) ? col : col-1;
     var rightCheck = (col == numOfCols-1) ? col : col+1;
@@ -75,7 +73,6 @@ function countMines(row, col){
             if(i === row && j === col){ //remove this check?
                 continue;
             }
-            //console.log(cellMatrix[i][j]);
             if(cellMatrix[i][j][2] === 'MINE!'){
                 localMines++;
             }
@@ -87,23 +84,34 @@ function countMines(row, col){
 
 function leftClickCell(item, event){
     var id = item.id,
-    row = parseInt(id.substring(
-        0, id.indexOf(',')
-    )),
-    col = parseInt(id.substring(
-        id.indexOf(',')+1, id.length
-    ));
+    row = getRowById(id),
+    col = getColById(id);
     //console.log(cellMatrix[row][col]);
     if(cellMatrix[row][col][2] === 'MINE!'){
         item.innerHTML = 'X';
         alert('Cell: ' + id + ' has a mine! Sorry, you lost :(');
     } else {
-        //console.log('id: ' + id);
-        //console.log('' + row + col);
         item.innerHTML = countMines(row, col);
     }
 }
 
-function setRandomMines(){
-    //
+function getRowById(id){ return parseInt(id.substring(0, id.indexOf(','))); }
+function getColById(id){ return parseInt(id.substring(id.indexOf(',')+1, id.length)); }
+
+function setRandomMines(numOfMines, firstMine){
+    //TODO select n cells for mines, excluding first selected mine
+    var all_possible = []
+    for(var i = 0; i<numOfRows; i++){
+        for(var j = 0; j<numOfCols; j++){
+            all_possible.push([i, j]);
+        }
+    }
+    //remove first mine picked option
+    var row = firstMine[0], col = firstMine[1];
+    all_possible.splice(row*numOfCols + col, 1);
+
+    console.log(all_possible);
+
+
+    //TODO select n cells for mines from all_possible
 }
