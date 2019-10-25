@@ -9,10 +9,9 @@ var numOfCols = 7;
 //Get the game area (table).
 var table = document.getElementById('play_area');
 var cellMatrix = initializePlayArea(table, numOfCols, numOfRows);
-//console.log(cellMatrix);
 
 
-//Add event listeners.
+//Adding event listeners.
 document.querySelectorAll('.table-cell').forEach(function(item){
     item.addEventListener('click', function(event){
         leftClickCell(item, event)
@@ -20,17 +19,15 @@ document.querySelectorAll('.table-cell').forEach(function(item){
 });
 
 
-setMine(0, 1, cellMatrix);
-setMine(0, 2, cellMatrix);
-setRandomMines(1, [0,3]);
-//TODO Set random mines (var numOfMines=...).
-//TODO Set timer till completion.
+setRandomMines(3, [0,3]); //TODO set initial mine clicked by first left click!
 
 
 
 
 //Function definitions.
 
+
+//Generate table cells for playing.
 function initializePlayArea(table, numOfCols, numOfRows){
     //Adding rows.
     var rows = [];
@@ -52,15 +49,23 @@ function initializePlayArea(table, numOfCols, numOfRows){
 }
 
 
-function setMine(row, col, cellMatrix){
-    var cell = document.getElementById(row + "," + col);
-    cellMatrix[row][col][2] = 'MINE!';
-    //console.log(cellMatrix[row][col]);
+//Left click function. Lose if mine is clicked. Counts mines in adjacent cells otherwise.
+function leftClickCell(item, event){
+    var id = item.id,
+    row = getRowById(id),
+    col = getColById(id);
+    if(cellMatrix[row][col][2] === 'MINE!'){
+        item.innerHTML = 'X';
+        alert('Cell: ' + id + ' has a mine! Sorry, you lost :(');
+    } else {
+        item.innerHTML = countMines(row, col);
+    }
 }
 
 
+//Count mines in adjacent cells.
 function countMines(row, col){
-    console.log('row:' + (row) + ', col: ' + (col));
+    //console.log('row:' + (row) + ', col: ' + (col));
     
     var leftCheck = (col == 0) ? col : col-1;
     var rightCheck = (col == numOfCols-1) ? col : col+1;
@@ -82,36 +87,43 @@ function countMines(row, col){
     return localMines;
 }
 
-function leftClickCell(item, event){
-    var id = item.id,
-    row = getRowById(id),
-    col = getColById(id);
-    //console.log(cellMatrix[row][col]);
-    if(cellMatrix[row][col][2] === 'MINE!'){
-        item.innerHTML = 'X';
-        alert('Cell: ' + id + ' has a mine! Sorry, you lost :(');
-    } else {
-        item.innerHTML = countMines(row, col);
-    }
-}
 
-function getRowById(id){ return parseInt(id.substring(0, id.indexOf(','))); }
-function getColById(id){ return parseInt(id.substring(id.indexOf(',')+1, id.length)); }
-
+//Set mines randomly.
 function setRandomMines(numOfMines, firstMine){
-    //TODO select n cells for mines, excluding first selected mine
+    var mineNumberDisplay = document.getElementById('mine-number-display');
+    mineNumberDisplay.innerHTML = '0/'+ numOfMines;
+
+
     var all_possible = []
     for(var i = 0; i<numOfRows; i++){
         for(var j = 0; j<numOfCols; j++){
             all_possible.push([i, j]);
         }
     }
-    //remove first mine picked option
+
     var row = firstMine[0], col = firstMine[1];
-    all_possible.splice(row*numOfCols + col, 1);
+    all_possible.splice(row*numOfCols + col, 1); //Remove first picked mine.
 
-    console.log(all_possible);
+    if(numOfMines >= all_possible.length){
+        console.log('ERROR: more mines than cells!')
+    }
 
+    //Picks n mines from leftover cells.
+    for(var i = 0; i<numOfMines; i++){
+        var randInt = Math.floor(Math.random() * all_possible.length);
+        setMine(all_possible[randInt][0], all_possible[randInt][1]);
+        all_possible.splice(randInt, 1)[0]; //remove selected mine
+    }
 
-    //TODO select n cells for mines from all_possible
 }
+
+
+//Set a single mine.
+function setMine(row, col){
+    var cell = document.getElementById(row + "," + col);
+    cellMatrix[row][col][2] = 'MINE!';
+}
+
+
+function getRowById(id){ return parseInt(id.substring(0, id.indexOf(','))); }
+function getColById(id){ return parseInt(id.substring(id.indexOf(',')+1, id.length)); }
