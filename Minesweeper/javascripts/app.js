@@ -1,65 +1,96 @@
 'use strict';
 
 
-//set as desired.
-var num_of_rows = 5;
-var num_of_cols = 7;
+//Initial play area dimensions. Set as desired.
+var numOfRows = 5;
+var numOfCols = 7;
 
 
-//get the game area (table).
+//Get the game area (table).
 var table = document.getElementById('play_area');
-initializePlayArea(table, num_of_cols, num_of_rows);
+var cellMatrix = initializePlayArea(table, numOfCols, numOfRows);
+//console.log(cellMatrix);
 
 
-//add event listeners
+//Add event listeners.
 document.querySelectorAll('.table-cell').forEach(function(item){
     item.addEventListener('click', function(event){
-        console.log('ID is: ' + item.id);
-        console.log(item.getAttribute('has-mine'));
-        if(item.getAttribute('has-mine') === 'MINE!'){
-            alert('Cell: ' + item.id + ' has a mine!');
+        //console.log('ID is: ' + item.id);
+        //console.log(item.getAttribute('has-a-mine'));
+        if(item.getAttribute('has-a-mine') === 'MINE!'){
+            alert('Cell: ' + item.id + ' has a mine! Sorry, you lost :(');
             item.innerHTML = 'X';
         } else {
-            item.innerHTML = countMines();
+            //TODO Doesn't work for cols/rows > 9! Implement parse untill ','.
+            item.innerHTML = countMines(parseInt(item.id[0]), parseInt(item.id[2]));
         }
     });
 });
 
 
-setMine('0,1');
+setMine(0, 1, cellMatrix);
+//TODO Set random mines (var numOfMines=...).
+//TODO Set timer till completion.
 
 
 
 
+//Function definitions.
 
-
-
-
-//Function definitions
-
-function initializePlayArea(table, num_of_cols, num_of_rows){
-    //adding rows.
-    for(var i = 0; i<num_of_rows; i++){
-        var table_row = document.createElement('tr');
-        //adding columns(cells).
-        for(var j = 0; j<num_of_cols; j++){
-            var table_cell = document.createElement('td');
-            //table_cell.innerHTML = i + ',' + j;
-            table_cell.classList.add('table-cell');
-            table_cell.setAttribute('id' , i + ',' + j);
-            table_cell.setAttribute('has-mine', 'no-mine');
-            table_row.appendChild(table_cell);
+function initializePlayArea(table, numOfCols, numOfRows){
+    //Adding rows.
+    var rows = [];
+    for(var i = 0; i<numOfRows; i++){
+        var tableRow = document.createElement('tr');
+        var cells = [];
+        //Adding columns(cells).
+        for(var j = 0; j<numOfCols; j++){
+            var tableCell = document.createElement('td');
+            tableCell.classList.add('table-cell');
+            tableCell.setAttribute('id' , i + ',' + j);
+            tableCell.setAttribute('has-a-mine', 'no-mine');
+            tableRow.appendChild(tableCell);
+            cells.push([i, j, 'no-mine']);
         }
-        table.appendChild(table_row);
+        table.appendChild(tableRow);
+        //console.log(rows);//TODO Comment this line when done.
+        rows.push(cells);
     }
+    return rows;
 }
 
-function setMine(id){
-    var cell = document.getElementById(id);
-    cell.setAttribute('has-mine', 'MINE!');
+
+function setMine(row, col, cellMatrix){
+    var cell = document.getElementById(row + "," + col);
+    cell.setAttribute('has-a-mine', 'MINE!');
+    cellMatrix[row][col][2] = 'MINE!';
+    //console.log(cellMatrix[row][col]);
 }
 
-function countMines(id, num_of_cols, num_of_rows){
-    //TODO
-    return '0';
+
+function countMines(row, col){
+    //console.log('entered countMines');
+    //console.log(numOfRows)
+    console.log('row:' + (row+1) + ', col: ' + (col+1));
+    
+    var leftCheck = (col == 0) ? col : col-1;
+    var rightCheck = (col == numOfCols) ? col : col+1;
+    var topCheck = (row == 0) ? row : row-1;
+    var bottomCheck = (row == numOfRows) ? row : row+1;
+    //console.log(leftCheck.toString() + rightCheck + topCheck + bottomCheck);
+
+    var localMines = 0;
+    for(var i = topCheck; i<=bottomCheck; i++){
+        for(var j = leftCheck; j<=rightCheck; j++){
+            if(i === row && j === col){ //remove this check?
+                continue;
+            }
+            console.log(cellMatrix[i][j]);
+            if(cellMatrix[i][j][2] === 'MINE!'){
+                localMines++;
+            }
+        }
+    }
+
+    return localMines;
 }
