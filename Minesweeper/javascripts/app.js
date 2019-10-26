@@ -7,16 +7,18 @@ var numOfCols = 7;
 
 
 //Get the game area (table).
-var table = document.getElementById('play_area');
-var cellMatrix = initializePlayArea(table, numOfCols, numOfRows);
+var table = document.getElementById('play_area'),
+cellMatrix = initializePlayArea(table, numOfCols, numOfRows),
+rightClickedCells = [];
 
 
 //Adding event listeners.
 document.querySelectorAll('.table-cell').forEach(function(item){
-    item.addEventListener('click', function(event){
-        leftClickCell(item, event)
-    });
+    item.addEventListener('click', function(event){ leftClickCell(item, event); });
+    item.addEventListener('contextmenu', function(event){ rightClickCell(item, event); });
 });
+
+//TODO add new game button event listener.
 
 
 setRandomMines(3, [0,3]); //TODO set initial mine clicked by first left click!
@@ -63,6 +65,28 @@ function leftClickCell(item, event){
 }
 
 
+//TODO add game end checking for all mines flagged or clicking on a mine.
+function rightClickCell(item, event){
+    event.preventDefault();
+    var id = item.id,
+    row = getRowById(id),
+    col = getColById(id);
+    //console.log('cell ' + id + ' has been right clicked!');
+    //rightClickedCells.push(id);
+    console.log(item.innerHTML);
+    var mineFlag = 'F';
+    if(item.innerHTML != mineFlag && item.innerHTML != ''){
+        return;
+    }
+    else if (item.innerHTML == mineFlag){
+        item.innerHTML = '';
+    }
+    else {
+        item.innerHTML = mineFlag;
+    }
+}
+
+
 //Count mines in adjacent cells.
 function countMines(row, col){
     //console.log('row:' + (row) + ', col: ' + (col));
@@ -105,14 +129,14 @@ function setRandomMines(numOfMines, firstMine){
     all_possible.splice(row*numOfCols + col, 1); //Remove first picked mine.
 
     if(numOfMines >= all_possible.length){
-        console.log('ERROR: more mines than cells!')
+        console.log('ERROR: more mines than cells!');
     }
 
     //Picks n mines from leftover cells.
     for(var i = 0; i<numOfMines; i++){
         var randInt = Math.floor(Math.random() * all_possible.length);
         setMine(all_possible[randInt][0], all_possible[randInt][1]);
-        all_possible.splice(randInt, 1)[0]; //remove selected mine
+        all_possible.splice(randInt, 1); //remove selected mine
     }
 
 }
