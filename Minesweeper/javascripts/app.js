@@ -2,8 +2,12 @@
 
 
 //Initial play area dimensions. Set as desired.
-var numOfRows = 5;
-var numOfCols = 7;
+var numOfRows = 4,
+    numOfCols = 3,
+    numOfMines = 1,
+    numOfLeftClicked = 0,
+    numOfRightClicked = 0,
+    firstClick = true;
 
 
 //Get the game area (table).
@@ -17,11 +21,12 @@ document.querySelectorAll('.table-cell').forEach(function(item){
     item.addEventListener('click', function(event){ leftClickCell(item, event); });
     item.addEventListener('contextmenu', function(event){ rightClickCell(item, event); });
 });
+refreshFlagNumberDisplay();
 
 //TODO add new game button event listener.
 
 
-setRandomMines(3, [0,3]); //TODO set initial mine clicked by first left click!
+//setRandomMines(numOfMines, [0,3]); //TODO set initial mine clicked by first left click!
 
 
 
@@ -42,7 +47,7 @@ function initializePlayArea(table, numOfCols, numOfRows){
             tableCell.classList.add('table-cell');
             tableCell.setAttribute('id' , i + ',' + j);
             tableRow.appendChild(tableCell);
-            cells.push([i, j, 'no-mine']);
+            cells.push([i, j, 'no-mine', 'not-clicked']);
         }
         table.appendChild(tableRow);
         rows.push(cells);
@@ -53,14 +58,25 @@ function initializePlayArea(table, numOfCols, numOfRows){
 
 //Left click function. Lose if mine is clicked. Counts mines in adjacent cells otherwise.
 function leftClickCell(item, event){
-    var id = item.id,
-    row = getRowById(id),
-    col = getColById(id);
-    if(cellMatrix[row][col][2] === 'MINE!'){
-        item.innerHTML = 'X';
-        alert('Cell: ' + id + ' has a mine! Sorry, you lost :(');
+    var row = getRowById(item.id),
+        col = getColById(item.id);
+    if(cellMatrix[row][col][3] === 'not-clicked'){
+        if(firstClick){
+            firstClick = false;
+            setRandomMines(numOfMines, [row, col]);
+        }
+        cellMatrix[row][col][3] = 'left-clicked';
+        if(cellMatrix[row][col][2] === 'MINE!'){
+            item.innerHTML = 'X';
+            alert('Cell: ' + item.id + ' has a mine! Sorry, you lost :(');
+            location.reload();
+        } else {
+            item.innerHTML = countMines(row, col);
+            numOfLeftClicked++;
+            checkWinCondition(numOfLeftClicked, numOfCols, numOfRows, numOfMines);
+        }
     } else {
-        item.innerHTML = countMines(row, col);
+        return;
     }
 }
 
@@ -68,21 +84,21 @@ function leftClickCell(item, event){
 //TODO add game end checking for all mines flagged or clicking on a mine.
 function rightClickCell(item, event){
     event.preventDefault();
-    var id = item.id,
-    row = getRowById(id),
-    col = getColById(id);
-    //console.log('cell ' + id + ' has been right clicked!');
-    //rightClickedCells.push(id);
-    console.log(item.innerHTML);
-    var mineFlag = 'F';
-    if(item.innerHTML != mineFlag && item.innerHTML != ''){
-        return;
+    var row = getRowById(item.id),
+        col = getColById(item.id),
+    mineFlag = '*';
+    if(cellMatrix[row][col][3] === 'not-clicked'){
+        cellMatrix[row][col][3] = 'right-clicked';
+        refreshFlagNumberDisplay(numOfRightClicked++);
+        item.innerHTML = mineFlag;
     }
-    else if (item.innerHTML == mineFlag){
+    else if (cellMatrix[row][col][3] === 'right-clicked'){
+        cellMatrix[row][col][3] = 'not-clicked';
+        refreshFlagNumberDisplay(numOfRightClicked--);
         item.innerHTML = '';
     }
     else {
-        item.innerHTML = mineFlag;
+        return;
     }
 }
 
@@ -91,10 +107,10 @@ function rightClickCell(item, event){
 function countMines(row, col){
     //console.log('row:' + (row) + ', col: ' + (col));
     
-    var leftCheck = (col == 0) ? col : col-1;
-    var rightCheck = (col == numOfCols-1) ? col : col+1;
-    var topCheck = (row == 0) ? row : row-1;
-    var bottomCheck = (row == numOfRows-1) ? row : row+1;
+    var leftCheck = (col == 0) ? col : col-1,
+        rightCheck = (col == numOfCols-1) ? col : col+1,
+        topCheck = (row == 0) ? row : row-1,
+        bottomCheck = (row == numOfRows-1) ? row : row+1;
 
     var localMines = 0;
     for(var i = topCheck; i<=bottomCheck; i++){
@@ -112,11 +128,14 @@ function countMines(row, col){
 }
 
 
+function refreshFlagNumberDisplay(){
+    var mineNumberDisplay = document.getElementById('mine-number-display');
+    mineNumberDisplay.innerHTML = numOfRightClicked + '/'+ numOfMines;
+}
+
+
 //Set mines randomly.
 function setRandomMines(numOfMines, firstMine){
-    var mineNumberDisplay = document.getElementById('mine-number-display');
-    mineNumberDisplay.innerHTML = '0/'+ numOfMines;
-
 
     var all_possible = []
     for(var i = 0; i<numOfRows; i++){
@@ -126,10 +145,11 @@ function setRandomMines(numOfMines, firstMine){
     }
 
     var row = firstMine[0], col = firstMine[1];
-    all_possible.splice(row*numOfCols + col, 1); //Remove first picked mine.
+        all_possible.splice(row*numOfCols + col, 1); //Remove first picked mine.
 
-    if(numOfMines >= all_possible.length){
-        console.log('ERROR: more mines than cells!');
+    if(numOfMines > all_possible.length){
+        alert('ERROR: more mines than cells! Change app.js specs.');
+        location.reload();
     }
 
     //Picks n mines from leftover cells.
@@ -146,6 +166,17 @@ function setRandomMines(numOfMines, firstMine){
 function setMine(row, col){
     var cell = document.getElementById(row + "," + col);
     cellMatrix[row][col][2] = 'MINE!';
+}
+
+function checkWinCondition(numOfLeftClicked, numOfCols, numOfRows, numOfMines){
+    var numOfLeftClickable = numOfCols * numOfRows - numOfMines;
+    if(numOfLeftClicked < numOfLeftClickable){
+        return;
+    }
+    else {
+        alert('YOU WON! Congrats :D');
+        location.reload();
+    }
 }
 
 
