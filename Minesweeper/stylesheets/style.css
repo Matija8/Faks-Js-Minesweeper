@@ -1,18 +1,60 @@
+body {
+    background-color: lightgoldenrodyellow;
+}
+
+
+header {
+    min-width: 700px;
+    background-color: #003e9b;
+    width: auto;
+    margin: auto;
+    border-radius: 10px;
+}
+
+main {
+    width: auto;
+    clear: both;
+}
+
+
 table {
     border: 3px solid black;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 20px;
 }
 
 td {
+    min-width: 60px;
+    min-height: 60px;
     width: 60px;
     height: 60px;
     border: 2px solid black;
     text-align: center;
     vertical-align: middle;
     font-size: 50px;
+    background-color: gainsboro;
 }
 
 td:hover {
     cursor: pointer;
+    /*box-shadow: 5px 10px #888888;*/
+}
+
+
+#new-game {
+    margin: 10px 150px;
+}
+
+#new-game:hover {
+    cursor: pointer;
+}
+
+#mine-number-display {
+    background-color: lavenderblush;
+    width: 60px;
+    height: 20px;
+    border-radius: 5px;
+    padding: 3px 10px;
+    margin: 10px 50px;
 }
