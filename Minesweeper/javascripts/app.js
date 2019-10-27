@@ -12,13 +12,14 @@ var numOfRows = 7,
     firstClick = true,
     cellMatrix = initializePlayArea(numOfCols, numOfRows);
 
-
+    
 //Adding event listeners.
 document.querySelectorAll('.table-cell').forEach(function(item){
     item.addEventListener('click', function(event){ leftClickCell(item, event); });
     item.addEventListener('contextmenu', function(event){ rightClickCell(item, event); });
     //item.addEventListener('auxclick', function(event){ rightClickCell(item, event); });
 });
+document.getElementById('new-game').addEventListener('click', function(event){ location.reload(); });
 
 //Display number of mines checked off.
 refreshFlagNumberDisplay();
@@ -26,7 +27,9 @@ refreshFlagNumberDisplay();
 
 
 //Function definitions.
-//---------------------------------------------------------
+//------------------------------------------------------------
+
+
 //Generate table cells for playing.
 function initializePlayArea(numOfCols, numOfRows){
     var table = document.getElementById('play_area'),
