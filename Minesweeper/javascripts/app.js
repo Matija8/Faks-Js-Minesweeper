@@ -9,6 +9,7 @@ var numOfRows = 7,
 //Global variables. Don't change.
     numOfLeftClicked = 0,
     numOfRightClicked = 0,
+    seconds = 0,
     firstClick = true,
     cellMatrix = initializePlayArea(numOfCols, numOfRows);
 
@@ -23,6 +24,10 @@ document.getElementById('new-game').addEventListener('click', function(event){ n
 
 //Display number of mines checked off.
 refreshFlagNumberDisplay();
+//Timer.
+refreshTimer();
+setInterval(refreshTimer, 1000);
+
 
 //Function definitions.
 //------------------------------------------------------------
@@ -124,7 +129,7 @@ function checkWinCondition(numOfLeftClicked, numOfCols, numOfRows, numOfMines){
         return;
     }
     else {
-        window.alert('YOU WON! Congrats :D');
+        window.alert('YOU WON! Congrats :D\nYour time is: ' + secondsToString(seconds-1));//todo time?
         newGame();
     }
 }
@@ -210,7 +215,14 @@ function refreshFlagNumberDisplay(){
 }
 
 
+function refreshTimer(){
+    document.getElementById('timer').innerHTML = secondsToString(seconds);
+    seconds++;
+}
+
+
 function getRowById(id){ return parseInt(id.substring(0, id.indexOf(','))); }
 function getColById(id){ return parseInt(id.substring(id.indexOf(',')+1, id.length)); }
 function getElementByRowCol(row, col){ return document.getElementById(row + ',' + col); }
 function newGame(){ location.reload(); }
+function secondsToString(seconds){ return new Date(seconds * 1000).toISOString().substr(11, 8); }

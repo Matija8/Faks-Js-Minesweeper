@@ -43,7 +43,7 @@ td:hover {
 
 
 #new-game {
-    margin: 10px 150px;
+    margin: 10px 100px;
 }
 
 #new-game:hover {
@@ -56,5 +56,14 @@ td:hover {
     height: 20px;
     border-radius: 5px;
     padding: 3px 10px;
-    margin: 10px 50px;
+    margin: 10px 20px;
+}
+
+#timer {
+    background-color: lavenderblush;
+    width: 60px;
+    height: 20px;
+    border-radius: 5px;
+    padding: 3px 10px;
+    margin: 10px 100px;
 }
