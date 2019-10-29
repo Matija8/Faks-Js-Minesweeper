@@ -5,7 +5,7 @@
 var numOfRows = 7,
     numOfCols = 9,
     numOfMines = 5,
-    clickSound = new Audio('../audio/click.mp3'), //feature creep?
+    //clickSound = new Audio('../audio/click.mp3'), //feature creep?
 
 //Global variables. Don't change.
     numOfLeftClicked = 0,
@@ -37,14 +37,15 @@ document.getElementById('new-game').addEventListener('click', function(event){ n
 refreshFlagNumberDisplay();
 //Timer.
 refreshTimer();
-setInterval(refreshTimer, 1000);
+//window.alert('Game started.');
+//setInterval(refreshTimer, 1000);
 
 
 //Function definitions.
 //------------------------------------------------------------
 
 
-//Generate table cells for playing.
+//Generate table cells for playing. Returns a matrix of cells.
 function initializePlayArea(numOfCols, numOfRows){
     var table = document.getElementById('play_area'),
         rows = [];
@@ -56,7 +57,7 @@ function initializePlayArea(numOfCols, numOfRows){
             tableCell.classList.add('table-cell');
             tableCell.setAttribute('id' , i + ',' + j);
             tableRow.appendChild(tableCell);
-            cells.push(['no-mine', 'not-clicked']);
+            cells.push(['no-mine', 'not-clicked']); // cell = [mine state, click state]
         }
         table.appendChild(tableRow);
         rows.push(cells);
@@ -67,33 +68,37 @@ function initializePlayArea(numOfCols, numOfRows){
 
 //Left click function. Lose if mine is clicked. Counts mines in adjacent cells otherwise.
 function leftClickCell(item, e){
-    var row = getRowById(item.id),
-        col = getColById(item.id),
-        cell = getCellById(item.id);
+    var cell = getCellByItem(item);
     if(cell[1] === 'not-clicked'){
-        if(firstClick){
-            firstClick = false;
-            setRandomMines(numOfMines, [row, col]);
-        }
         cell[1] = 'left-clicked';
+
+        if(firstClick){
+            //TODO prompt: Click any cell to start the game.
+            firstClick = false;
+            setRandomMines(numOfMines, item);
+            setInterval(refreshTimer, 1000);
+        }
+        
         if(cell[0] === 'MINE!'){
             gameLoss();
-        } else {
+        }
+        else {
             numOfLeftClicked++;
             item.style.backgroundColor = 'grey';
-            var mineCount = countMines(row, col);
+            var mineCount = countMines(item);
             if(mineCount == 0){
                 //autoclick adjacent mines
-                zeroCellLeftClick(row, col);
+                zeroCellLeftClick(item);
             }
             else {
                 item.innerHTML = mineCount;
             }
-            checkWinCondition(numOfLeftClicked, numOfCols, numOfRows, numOfMines);
+            if(winCondition()){
+                gameWin();
+            }
         }
-    } else {
-        return; //leftClicked on alredy leftClicked cell.
     }
+    else return; //leftClicked on alredy clicked cell.
 }
 
 
@@ -101,14 +106,14 @@ function leftClickCell(item, e){
 //Place or remove a flag from a cell;
 function rightClickCell(item, event){
     event.preventDefault();
-    var row = getRowById(item.id),
-        col = getColById(item.id);
-    if(cellMatrix[row][col][1] === 'not-clicked'){
-        cellMatrix[row][col][1] = 'right-clicked';
+    //if(firstClick) return; //TODO: Da li dozvoliti right-click za prvi click?
+    var cell = getCellByItem(item);
+    if(cell[1] === 'not-clicked'){
+        cell[1] = 'right-clicked';
         placeFlag(item, '*');
     }
-    else if (cellMatrix[row][col][1] === 'right-clicked'){
-        cellMatrix[row][col][1] = 'not-clicked';
+    else if (cell[1] === 'right-clicked'){
+        cell[1] = 'not-clicked';
         removeFlag(item);
     }
     else {
@@ -117,7 +122,9 @@ function rightClickCell(item, event){
 }
 
 
-function zeroCellLeftClick(row, col){    
+function zeroCellLeftClick(item){
+    var row = getRowById(item.id),
+        col = getColById(item.id);
     var leftCheck = (col == 0) ? col : col-1,
         rightCheck = (col == numOfCols-1) ? col : col+1,
         topCheck = (row == 0) ? row : row-1,
@@ -134,15 +141,15 @@ function zeroCellLeftClick(row, col){
 }
 
 
-function checkWinCondition(numOfLeftClicked, numOfCols, numOfRows, numOfMines){
+function winCondition(){
     var numOfLeftClickable = numOfCols * numOfRows - numOfMines;
-    if(numOfLeftClicked < numOfLeftClickable){
-        return;
-    }
-    else {
-        window.alert('YOU WON! Congrats :D\nYour time is: ' + secondsToString(seconds-1));//todo time?
-        newGame();
-    }
+    return numOfLeftClicked == numOfLeftClickable;
+}
+
+
+function gameWin(){
+    window.alert('YOU WON! Congrats :D\nYour time is: ' + secondsToString(seconds-1));
+    newGame();
 }
 
 
@@ -162,8 +169,9 @@ function gameLoss(){
 
 
 //Count mines in adjacent cells.
-function countMines(row, col){
-    //console.log('row:' + (row) + ', col: ' + (col));
+function countMines(item){
+    var row = getRowById(item.id),
+        col = getColById(item.id);
     
     var leftCheck = (col == 0) ? col : col-1,
         rightCheck = (col == numOfCols-1) ? col : col+1,
@@ -196,7 +204,7 @@ function setRandomMines(numOfMines, firstMine){
         }
     }
 
-    var row = firstMine[0], col = firstMine[1];
+    var row = getRowById(firstMine.id), col = getColById(firstMine.id);
         all_possible.splice(row*numOfCols + col, 1); //Remove first picked mine.
 
     if(numOfMines > all_possible.length){
@@ -216,14 +224,13 @@ function setRandomMines(numOfMines, firstMine){
 
 //Set a single mine.
 function setMine(row, col){
-    var cell = getElementByRowCol(row, col);
     cellMatrix[row][col][0] = 'MINE!';
 }
 
 
 //flagging functions.
 function placeFlag(item, flagSymbol){
-    item.innerHTML = flagSymbol; 
+    item.innerHTML = flagSymbol;
     refreshFlagNumberDisplay(numOfRightClicked++);
 }
 function removeFlag(item){
@@ -247,8 +254,9 @@ function refreshTimer(){
 function getRowById(id){ return parseInt(id.substring(0, id.indexOf(','))); }
 function getColById(id){ return parseInt(id.substring(id.indexOf(',')+1, id.length)); }
 function getElementByRowCol(row, col){ return document.getElementById(row + ',' + col); }
-function getCellById(id){
-    var row = getRowById(id), col = getColById(id);
+function getCellByItem(item){
+    var row = getRowById(item.id),
+        col = getColById(item.id);
     return cellMatrix[row][col];
 }
 
