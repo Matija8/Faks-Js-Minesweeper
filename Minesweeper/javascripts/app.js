@@ -12,6 +12,8 @@ var numOfRows = 7,
     numOfRightClicked = 0,
     seconds = 0,
     firstClick = true,
+    flagSymbol = '🚩',
+    mineSymbol = '☢',
     cellMatrix = initializePlayArea(numOfCols, numOfRows);
 
 /*
@@ -42,8 +44,8 @@ refreshTimer();
 //setInterval(refreshTimer, 1000);
 
 
-//Function definitions.
-//------------------------------------------------------------
+//----------------------------------------------------------------------------------
+//Function definitions:
 
 
 //Generate table cells for playing. Returns a matrix of cells.
@@ -105,7 +107,7 @@ function rightClickCell(item, event){
     var cell = getCellByItem(item);
     if(cell[1] === 'not-clicked'){
         cell[1] = 'right-clicked';
-        placeFlag(item, '🚩');
+        placeFlag(item);
     }
     else if (cell[1] === 'right-clicked'){
         cell[1] = 'not-clicked';
@@ -134,8 +136,8 @@ function middleClickWrapper(item, event, down){
 
 function middleClick(item, down){
     //down is a bool value,
-    //down = true => mousedown
-    //down = false => mouseup
+    //down == true => mousedown
+    //down == false => mouseup
     var cell = getCellByItem(item);
     if (cell[1] == 'left-clicked'){
         var localCells = getAdjacentCells(item),
@@ -162,6 +164,7 @@ function middleClick(item, down){
 }
 
 
+//On middle-click highlight non-open cells.
 function highlightCell(item, on){
     if(on){
         item.style.boxShadow = '10px 10px #888888';
@@ -172,6 +175,7 @@ function highlightCell(item, on){
 }
 
 
+//Helper function used for: middleClick(), zeroCellLeftClick() & countMines()
 function getAdjacentCells(item){
     var row = getRowById(item.id),
         col = getColById(item.id),
@@ -226,7 +230,7 @@ function gameLoss(){
             if(cellMatrix[i][j][0] === 'MINE!'){
                 var cell = getElementByRowCol(i, j);
                 cell.style.backgroundColor = 'red';
-                cell.innerHTML = '☢';
+                cell.innerHTML = mineSymbol;
             }
         }
     }
@@ -250,28 +254,33 @@ function countMines(item){
 //Set mines randomly.
 function setRandomMines(numOfMines, firstMine){
 
-    var all_possible = [];
+    //Set possible choices.
+    var mineChoices = [];
     for(var i = 0; i<numOfRows; i++){
         for(var j = 0; j<numOfCols; j++){
-            all_possible.push([i, j]);
+            mineChoices.push([i, j]);
         }
     }
 
-    var row = getRowById(firstMine.id), col = getColById(firstMine.id);
-        all_possible.splice(row*numOfCols + col, 1); //Remove first picked mine.
+    //Exclude first left-clicked cell from possible mine choices.
+    var row = getRowById(firstMine.id),
+        col = getColById(firstMine.id);
+        mineChoices.splice(row*numOfCols + col, 1);
 
-    if(numOfMines > all_possible.length){
+    //Check correct initial numOfMines.
+    if(numOfMines > mineChoices.length){
         window.alert('ERROR: more mines than cells! Change app.js specs.');
         newGame();
     }
 
-    //Picks n mines from leftover cells.
+    //Picks n mines from leftover cell choices.
     for(i = 0; i<numOfMines; i++){
-        var randInt = Math.floor(Math.random() * all_possible.length);
-        setMine(all_possible[randInt][0], all_possible[randInt][1]);
-        all_possible.splice(randInt, 1); //remove selected mine
+        var randInt = Math.floor(Math.random() * mineChoices.length); //random number in [0, n).
+            row = mineChoices[randInt][0];
+            col = mineChoices[randInt][1];
+        setMine(row, col);
+        mineChoices.splice(randInt, 1); //remove selected cell from mine choices.
     }
-
 }
 
 
@@ -282,7 +291,7 @@ function setMine(row, col){
 
 
 //flagging functions.
-function placeFlag(item, flagSymbol){
+function placeFlag(item){
     item.innerHTML = flagSymbol;
     refreshFlagNumberDisplay(numOfRightClicked++);
 }
@@ -301,17 +310,13 @@ function refreshTimer(){
     document.getElementById('timer').innerHTML = 'Time: ' + secondsToString(seconds);
     seconds++;
 }
+function secondsToString(seconds){ return new Date(seconds * 1000).toISOString().substr(11, 8); }
 
 
 //Getter functions.
+function getElementByRowCol(row, col){ return document.getElementById(row + ',' + col); }
+function getCellByItem(item){ return cellMatrix[getRowById(item.id)][getColById(item.id)]; }
 function getRowById(id){ return parseInt(id.substring(0, id.indexOf(','))); }
 function getColById(id){ return parseInt(id.substring(id.indexOf(',')+1, id.length)); }
-function getElementByRowCol(row, col){ return document.getElementById(row + ',' + col); }
-function getCellByItem(item){
-    var row = getRowById(item.id),
-        col = getColById(item.id);
-    return cellMatrix[row][col];
-}
 
 function newGame(){ location.reload(); }
-function secondsToString(seconds){ return new Date(seconds * 1000).toISOString().substr(11, 8); }
