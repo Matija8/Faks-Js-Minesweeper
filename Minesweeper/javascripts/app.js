@@ -234,8 +234,11 @@ function gameLoss(){
             }
         }
     }
-    window.alert('Sorry, you just lost :(');
-    newGame();
+    //Added timeout for chrome(ium) support. Otherwise no mine rendering takes place.
+    setTimeout(function(){
+        window.alert('Sorry, you just lost :(');
+        newGame();
+    } ,100);
 }
 
 

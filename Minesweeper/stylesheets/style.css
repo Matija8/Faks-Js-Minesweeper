@@ -29,11 +29,12 @@ table {
 td {
     min-width: 60px;
     min-height: 60px;
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     border: 2px solid black;
     text-align: center;
     vertical-align: middle;
+    font-family: Tahoma, Geneva, sans-serif;
     font-size: 50px;
     background-color: gainsboro;
 }
