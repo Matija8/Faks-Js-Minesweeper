@@ -127,22 +127,41 @@ function middleClickWrapper(item, event, down){
 
     if (event.which) { // if e.which, use 2 for middle button
         if (event.which === 2) {
-            middlePress(item, down);
+            middleClick(item, down);
         }
     } else if (event.button) { // and if e.button, use 4
         if (event.button === 4) {
-            middlePress(item, down);
+            middleClick(item, down);
         }
     }
 }
 
 
-function middlePress(item, press){
-    var localCells = getAdjacentCells(item);
-    localCells.forEach(function(itm){
-        //console.log(itm);
-        highlightCell(itm, press);
-    });
+function middleClick(item, down){
+    var cell = getCellByItem(item);
+    if (cell[1] == 'left-clicked'){
+        var localCells = getAdjacentCells(item),
+            clearLocalCells = [],
+            numOfMines = countMines(item);
+        localCells.forEach(function(itm){
+            var currentCell = getCellByItem(itm);
+            if(currentCell[1] === 'right-clicked'){
+                numOfMines--;
+            }
+            else if(currentCell[1] === 'not-clicked'){
+                clearLocalCells.push(itm);
+            }
+        });
+        clearLocalCells.forEach(function(itm){
+            console.log(numOfMines);
+            if(numOfMines === 0){
+                leftClickCell(itm);
+            }
+            else {
+                highlightCell(itm, down);
+            }
+        });
+    }    
 }
 
 
