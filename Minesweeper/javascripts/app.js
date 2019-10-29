@@ -118,15 +118,13 @@ function rightClickCell(item, event){
 
 
 function middleClickWrapper(item, event, down){
-    //down is a bool value,
-    //down = true => mousedown
-    //down = false => mouseup
+    //middleClick() wrapper for multi browser support.
 
-    if (event.which) { // if e.which, use 2 for middle button
+    if (event.which) { // if event.which, use 2 for middle button
         if (event.which === 2) {
             middleClick(item, down);
         }
-    } else if (event.button) { // and if e.button, use 4
+    } else if (event.button) { // and if event.button, use 4
         if (event.button === 4) {
             middleClick(item, down);
         }
@@ -135,6 +133,9 @@ function middleClickWrapper(item, event, down){
 
 
 function middleClick(item, down){
+    //down is a bool value,
+    //down = true => mousedown
+    //down = false => mouseup
     var cell = getCellByItem(item);
     if (cell[1] == 'left-clicked'){
         var localCells = getAdjacentCells(item),
@@ -150,7 +151,6 @@ function middleClick(item, down){
             }
         });
         clearLocalCells.forEach(function(itm){
-            console.log(numOfMines);
             if(numOfMines === 0){
                 leftClickCell(itm);
             }
@@ -202,21 +202,9 @@ function firstLeftClick(item){
 
 
 function zeroCellLeftClick(item){
-    var row = getRowById(item.id),
-        col = getColById(item.id);
-    var leftCheck = (col == 0) ? col : col-1,
-        rightCheck = (col == numOfCols-1) ? col : col+1,
-        topCheck = (row == 0) ? row : row-1,
-        bottomCheck = (row == numOfRows-1) ? row : row+1;
-        
-    for(var i = topCheck; i<=bottomCheck; i++){
-        for(var j = leftCheck; j<=rightCheck; j++){
-            if(i === row && j === col){
-                continue;
-            }
-            leftClickCell(getElementByRowCol(i, j), null);
-        }
-    }
+    getAdjacentCells(item).forEach(function(itm){
+        leftClickCell(itm);
+    });
 }
 
 
@@ -249,27 +237,13 @@ function gameLoss(){
 
 //Count mines in adjacent cells.
 function countMines(item){
-    var row = getRowById(item.id),
-        col = getColById(item.id);
-    
-    var leftCheck = (col == 0) ? col : col-1,
-        rightCheck = (col == numOfCols-1) ? col : col+1,
-        topCheck = (row == 0) ? row : row-1,
-        bottomCheck = (row == numOfRows-1) ? row : row+1;
-
-    var localMines = 0;
-    for(var i = topCheck; i<=bottomCheck; i++){
-        for(var j = leftCheck; j<=rightCheck; j++){
-            if(i === row && j === col){ //remove this check?
-                continue;
-            }
-            if(cellMatrix[i][j][0] === 'MINE!'){
-                localMines++;
-            }
+    var count = 0;
+    getAdjacentCells(item).forEach(function(itm){
+        if(getCellByItem(itm)[0] === 'MINE!'){
+            count++;
         }
-    }
-
-    return localMines;
+    });
+    return count;
 }
 
 
