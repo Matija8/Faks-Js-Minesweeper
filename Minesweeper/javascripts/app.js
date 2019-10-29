@@ -13,6 +13,16 @@ var numOfRows = 7,
     firstClick = true,
     cellMatrix = initializePlayArea(numOfCols, numOfRows);
 
+/*
+cellMatrix is a matrix of pairs (mine_state, click_state),
+    where mine_state can be one of 2 states: {'no-mine', 'MINE!'},
+    and click_state can be one of 3 states: {'not-clicked', 'left-clicked', 'right-clicked'}.
+
+seconds is the time past from the start of the game in seconds.
+
+firstClick is used so that the first click can't be on a mine.
+*/
+
     
 //Adding event listeners.
 document.querySelectorAll('.table-cell').forEach(function(item){
@@ -55,16 +65,17 @@ function initializePlayArea(numOfCols, numOfRows){
 
 
 //Left click function. Lose if mine is clicked. Counts mines in adjacent cells otherwise.
-function leftClickCell(item, e){
+function leftClickCell(item, e){    
     var row = getRowById(item.id),
-        col = getColById(item.id);
-    if(cellMatrix[row][col][1] === 'not-clicked'){
+        col = getColById(item.id),
+        cell = getCellById(item.id);
+    if(cell[1] === 'not-clicked'){
         if(firstClick){
             firstClick = false;
             setRandomMines(numOfMines, [row, col]);
         }
-        cellMatrix[row][col][1] = 'left-clicked';
-        if(cellMatrix[row][col][0] === 'MINE!'){
+        cell[1] = 'left-clicked';
+        if(cell[0] === 'MINE!'){
             gameLoss();
         } else {
             numOfLeftClicked++;
@@ -83,22 +94,18 @@ function leftClickCell(item, e){
 
 
 
-//TODO add game end checking for all mines flagged or clicking on a mine.
+//Place or remove a flag from a cell;
 function rightClickCell(item, event){
-    //console.log(event);
     event.preventDefault();
     var row = getRowById(item.id),
-        col = getColById(item.id),
-    mineFlag = '*';
+        col = getColById(item.id);
     if(cellMatrix[row][col][1] === 'not-clicked'){
         cellMatrix[row][col][1] = 'right-clicked';
-        refreshFlagNumberDisplay(numOfRightClicked++);
-        item.innerHTML = mineFlag;
+        placeFlag(item, '*');
     }
     else if (cellMatrix[row][col][1] === 'right-clicked'){
         cellMatrix[row][col][1] = 'not-clicked';
-        refreshFlagNumberDisplay(numOfRightClicked--);
-        item.innerHTML = '';
+        removeFlag(item);
     }
     else {
         return;
@@ -209,20 +216,36 @@ function setMine(row, col){
 }
 
 
+//flagging functions.
+function placeFlag(item, flagSymbol){
+    item.innerHTML = flagSymbol; 
+    refreshFlagNumberDisplay(numOfRightClicked++);
+}
+function removeFlag(item){
+    item.innerHTML = '';
+    refreshFlagNumberDisplay(numOfRightClicked--);
+}
+
+
+//UI refresh functions.
 function refreshFlagNumberDisplay(){
     var mineNumberDisplay = document.getElementById('mine-number-display');
     mineNumberDisplay.innerHTML = numOfRightClicked + '/'+ numOfMines;
 }
-
-
 function refreshTimer(){
     document.getElementById('timer').innerHTML = secondsToString(seconds);
     seconds++;
 }
 
 
+//Getter functions.
 function getRowById(id){ return parseInt(id.substring(0, id.indexOf(','))); }
 function getColById(id){ return parseInt(id.substring(id.indexOf(',')+1, id.length)); }
 function getElementByRowCol(row, col){ return document.getElementById(row + ',' + col); }
+function getCellById(id){
+    var row = getRowById(id), col = getColById(id);
+    return cellMatrix[row][col];
+}
+
 function newGame(){ location.reload(); }
 function secondsToString(seconds){ return new Date(seconds * 1000).toISOString().substr(11, 8); }
