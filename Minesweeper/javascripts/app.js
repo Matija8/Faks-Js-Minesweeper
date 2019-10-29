@@ -54,7 +54,7 @@ function initializePlayArea(numOfCols, numOfRows){
         cells = [];
         for(var j = 0; j<numOfCols; j++){
             var tableCell = document.createElement('td');
-            tableCell.classList.add('table-cell');
+            tableCell.classList.add('table-cell', 'noselect');
             tableCell.setAttribute('id' , i + ',' + j);
             tableRow.appendChild(tableCell);
             cells.push(['no-mine', 'not-clicked']); // cell = [mine state, click state]
