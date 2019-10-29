@@ -5,6 +5,7 @@
 var numOfRows = 7,
     numOfCols = 9,
     numOfMines = 5,
+    clickSound = new Audio('../audio/click.mp3'), //feature creep?
 
 //Global variables. Don't change.
     numOfLeftClicked = 0,
@@ -65,7 +66,7 @@ function initializePlayArea(numOfCols, numOfRows){
 
 
 //Left click function. Lose if mine is clicked. Counts mines in adjacent cells otherwise.
-function leftClickCell(item, e){    
+function leftClickCell(item, e){
     var row = getRowById(item.id),
         col = getColById(item.id),
         cell = getCellById(item.id);
@@ -79,12 +80,15 @@ function leftClickCell(item, e){
             gameLoss();
         } else {
             numOfLeftClicked++;
+            item.style.backgroundColor = 'grey';
             var mineCount = countMines(row, col);
             if(mineCount == 0){
                 //autoclick adjacent mines
                 zeroCellLeftClick(row, col);
             }
-            item.innerHTML = mineCount;
+            else {
+                item.innerHTML = mineCount;
+            }
             checkWinCondition(numOfLeftClicked, numOfCols, numOfRows, numOfMines);
         }
     } else {
@@ -147,6 +151,7 @@ function gameLoss(){
         for(var j = 0; j<numOfCols; j++){
             if(cellMatrix[i][j][0] === 'MINE!'){
                 var cell = getElementByRowCol(i, j);
+                cell.style.backgroundColor = 'red';
                 cell.innerHTML = 'X';
             }
         }
