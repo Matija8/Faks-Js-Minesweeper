@@ -29,7 +29,8 @@ firstClick is used so that the first click can't be on a mine.
 document.querySelectorAll('.table-cell').forEach(function(item){
     item.addEventListener('click', function(event){ leftClickCell(item, event); });
     item.addEventListener('contextmenu', function(event){ rightClickCell(item, event); });
-    //item.addEventListener('auxclick', function(event){ rightClickCell(item, event); });
+    item.addEventListener('mousedown', function(event){ middleClickWrapper(item, event, true); });
+    item.addEventListener('mouseup', function(event){ middleClickWrapper(item, event, false); });
 });
 document.getElementById('new-game').addEventListener('click', function(event){ newGame(); });
 
@@ -73,12 +74,10 @@ function leftClickCell(item, e){
         cell[1] = 'left-clicked';
 
         if(firstClick){
-            //TODO prompt: Click any cell to start the game.
             firstClick = false;
             setRandomMines(numOfMines, item);
             setInterval(refreshTimer, 1000);
-        }
-        
+        }        
         if(cell[0] === 'MINE!'){
             gameLoss();
         }
@@ -86,9 +85,8 @@ function leftClickCell(item, e){
             numOfLeftClicked++;
             item.style.backgroundColor = 'grey';
             var mineCount = countMines(item);
-            if(mineCount == 0){
-                //autoclick adjacent mines
-                zeroCellLeftClick(item);
+            if(mineCount === 0){
+                zeroCellLeftClick(item); //autoclick adjacent mines.
             }
             else {
                 item.innerHTML = mineCount;
@@ -119,6 +117,63 @@ function rightClickCell(item, event){
     else {
         return;
     }
+}
+
+
+function middleClickWrapper(item, event, down){
+    //down is a bool value,
+    //down = true => mousedown
+    //down = false => mouseup
+
+    if (event.which) { // if e.which, use 2 for middle button
+        if (event.which === 2) {
+            middlePress(item, down);
+        }
+    } else if (event.button) { // and if e.button, use 4
+        if (event.button === 4) {
+            middlePress(item, down);
+        }
+    }
+}
+
+
+function middlePress(item, press){
+    var localCells = getAdjacentCells(item);
+    localCells.forEach(function(itm){
+        //console.log(itm);
+        highlightCell(itm, press);
+    });
+}
+
+
+function highlightCell(item, on){
+    if(on){
+        item.style.boxShadow = '10px 10px #888888';
+    }
+    else {
+        item.style.boxShadow = '';
+    }
+}
+
+
+function getAdjacentCells(item){
+    var row = getRowById(item.id),
+        col = getColById(item.id),
+        list = [];
+    var leftCheck = (col == 0) ? col : col-1,
+        rightCheck = (col == numOfCols-1) ? col : col+1,
+        topCheck = (row == 0) ? row : row-1,
+        bottomCheck = (row == numOfRows-1) ? row : row+1;
+        
+    for(var i = topCheck; i<=bottomCheck; i++){
+        for(var j = leftCheck; j<=rightCheck; j++){
+            if(i === row && j === col){
+                continue;
+            }
+            list.push(getElementByRowCol(i, j));
+        }
+    }
+    return list;
 }
 
 
