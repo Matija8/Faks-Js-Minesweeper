@@ -12,5 +12,5 @@
 
 ### Notes:
 
-* #### Timer starts from first cell click.
+* #### Timer starts from the first cell left-click.
 * #### You can change the number of rows, columns or mines in the "Minesweeper/javascripts/app.js" file (lines 5-7).
