@@ -48,7 +48,7 @@ refreshTimer();
 
 //Generate table cells for playing. Returns a matrix of cells.
 function initializePlayArea(numOfCols, numOfRows){
-    var table = document.getElementById('play_area'),
+    var table = document.getElementById('play-area'),
         rows = [];
     for(var i = 0; i<numOfRows; i++){
         var tableRow = document.createElement('tr'),
@@ -238,7 +238,7 @@ function gameLoss(){
             if(cellMatrix[i][j][0] === 'MINE!'){
                 var cell = getElementByRowCol(i, j);
                 cell.style.backgroundColor = 'red';
-                cell.innerHTML = 'X';
+                cell.innerHTML = '☢';
             }
         }
     }
