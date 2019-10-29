@@ -74,10 +74,8 @@ function leftClickCell(item, e){
         cell[1] = 'left-clicked';
 
         if(firstClick){
-            firstClick = false;
-            setRandomMines(numOfMines, item);
-            setInterval(refreshTimer, 1000);
-        }        
+            firstLeftClick(item);
+        }
         if(cell[0] === 'MINE!'){
             gameLoss();
         }
@@ -104,11 +102,10 @@ function leftClickCell(item, e){
 //Place or remove a flag from a cell;
 function rightClickCell(item, event){
     event.preventDefault();
-    //if(firstClick) return; //TODO: Da li dozvoliti right-click za prvi click?
     var cell = getCellByItem(item);
     if(cell[1] === 'not-clicked'){
         cell[1] = 'right-clicked';
-        placeFlag(item, '*');
+        placeFlag(item, '🚩');
     }
     else if (cell[1] === 'right-clicked'){
         cell[1] = 'not-clicked';
@@ -193,6 +190,14 @@ function getAdjacentCells(item){
         }
     }
     return list;
+}
+
+
+function firstLeftClick(item){
+    firstClick = false;
+    document.getElementById('start-prompt').innerHTML = '';
+    setRandomMines(numOfMines, item);
+    setInterval(refreshTimer, 1000);
 }
 
 
@@ -316,10 +321,10 @@ function removeFlag(item){
 //UI refresh functions.
 function refreshFlagNumberDisplay(){
     var mineNumberDisplay = document.getElementById('mine-number-display');
-    mineNumberDisplay.innerHTML = numOfRightClicked + '/'+ numOfMines;
+    mineNumberDisplay.innerHTML = 'Flags: ' + numOfRightClicked + '/'+ numOfMines;
 }
 function refreshTimer(){
-    document.getElementById('timer').innerHTML = secondsToString(seconds);
+    document.getElementById('timer').innerHTML = 'Time: ' + secondsToString(seconds);
     seconds++;
 }
 

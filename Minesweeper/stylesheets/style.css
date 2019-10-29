@@ -5,10 +5,12 @@ body {
 
 header {
     min-width: 700px;
+    min-height: 60px;
     background-color: #003e9b;
     width: auto;
     margin: auto;
     border-radius: 10px;
+    /*text-align: center;*/
 }
 
 main {
@@ -42,30 +44,32 @@ td:hover {
 }
 
 
+#start-prompt {
+    height: 60px;
+    margin: 25px;
+    text-align: center;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 35px;
+}
+
+
+#new-game, #mine-number-display, #timer {
+    background-color: lavenderblush;
+    border-radius: 5px;
+    float: left;
+    padding: 3px 10px;
+    margin: 20px 50px 20px 50px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+}
+
+
 #new-game {
-    margin: 10px 100px;
+    margin-left: 100px;
 }
 
 #new-game:hover {
     cursor: pointer;
-}
-
-#mine-number-display {
-    background-color: lavenderblush;
-    width: 60px;
-    height: 20px;
-    border-radius: 5px;
-    padding: 3px 10px;
-    margin: 10px 20px;
-}
-
-#timer {
-    background-color: lavenderblush;
-    width: 60px;
-    height: 20px;
-    border-radius: 5px;
-    padding: 3px 10px;
-    margin: 10px 100px;
 }
 
 /* disable text selection.
@@ -78,4 +82,4 @@ from: https://stackoverflow.com/questions/826782/how-to-disable-text-selection-h
           -ms-user-select: none; /* Internet Explorer/Edge */
               user-select: none; /* Non-prefixed version, currently
                                     supported by Chrome, Opera and Firefox */
-  }
+}
