@@ -16,24 +16,6 @@ var numOfRows = 7,
     //mineSymbol = '☢',
     cellMatrix = initializePlayArea(numOfCols, numOfRows);
 
-/*
-cellMatrix is a matrix of pairs (mine_state, click_state),
-    where mine_state can be one of 2 states: {'no-mine', 'MINE!'},
-    and click_state can be one of 3 states: {'not-clicked', 'left-clicked', 'right-clicked'}.
-
-seconds is the time past from the start of the game in seconds.
-
-firstClick is used so that the first click can't be on a mine.
-*/
-
-/*
-//Adding event listeners.
-document.querySelectorAll('.table-cell').forEach(function(item){
-    item.addEventListener('click', function(event){ leftClickCell(item, event); });
-    item.addEventListener('contextmenu', function(event){ rightClickCell(item, event); });
-    item.addEventListener('mousedown', function(event){ middleClickWrapper(item, event, true); });
-    item.addEventListener('mouseup', function(event){ middleClickWrapper(item, event, false); });
-});*/
 document.getElementById('new-game').addEventListener('click', function(event){ newGame(); });
 
 //Display number of mines checked off.
@@ -47,10 +29,22 @@ refreshTimer();
 
 //Object constructors:
 
+function Game(numOfRows, numOfCols, numOfMines){
+    this.numOfLeftClicked = 0;
+    this.numOfRightClicked = 0;
+    this.seconds = 0;
+    this.firstClick = true;
+    this.cellMatrix = [];
 
-function Cell(row, col, item) {
+}
+
+
+function Cell(row, col, item){
+
+    //TODO: da li je ovo potrebno?
     this.row = row;
     this.col = col;
+
     this.item = item; //DOM object reference
     this.mineState = 'no-mine'; //∈ {'no-mine', 'MINE!'} TODO: enumarate?
     this.clickState = 'not-clicked'; //∈ {'not-clicked', 'left-clicked', 'right-clicked'}
