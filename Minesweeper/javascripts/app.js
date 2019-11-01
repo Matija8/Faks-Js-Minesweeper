@@ -12,8 +12,8 @@ var numOfRows = 7,
     numOfRightClicked = 0,
     seconds = 0,
     firstClick = true,
-    flagSymbol = '🚩',
-    mineSymbol = '☢',
+    //flagSymbol = '🚩',
+    //mineSymbol = '☢',
     cellMatrix = initializePlayArea(numOfCols, numOfRows);
 
 /*
@@ -245,15 +245,15 @@ function gameLoss(){
         for(var j = 0; j<numOfCols; j++){
             if(cellMatrix[i][j][0] === 'MINE!'){
                 var cell = getElementByRowCol(i, j);
-                cell.style.backgroundColor = 'red';
-                cell.innerHTML = mineSymbol;
+                cell.style.backgroundImage = 'url("./images/mine.png")';
+                cell.style.backgroundSize = 'contain';
             }
         }
     }
     //Added timeout for chrome(ium) support. Otherwise no mine rendering takes place.
     setTimeout(function(){
         window.alert('Sorry, you just lost :(');
-        newGame();
+        //newGame();
     } ,100);
 }
 
@@ -311,16 +311,19 @@ function setMine(row, col){
 
 //flagging functions.
 function placeFlag(item){
-    item.innerHTML = flagSymbol;
+    //item.innerHTML = flagSymbol;
+    item.style.backgroundImage = 'url("./images/flag.png")';
+    item.style.backgroundSize = 'contain';
     refreshFlagNumberDisplay(numOfRightClicked++);
 }
 function removeFlag(item){
-    item.innerHTML = '';
+    item.style.backgroundImage = 'none';
+    item.style.backgroundSize = 'contain';
     refreshFlagNumberDisplay(numOfRightClicked--);
 }
 
 
-//UI refresh functions.
+//UI refresh functions. TODO: work with DOM references, don't use getById always.
 function refreshFlagNumberDisplay(){
     var mineNumberDisplay = document.getElementById('mine-number-display');
     mineNumberDisplay.innerHTML = 'Flags: ' + numOfRightClicked + '/'+ numOfMines;

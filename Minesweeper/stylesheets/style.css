@@ -36,7 +36,10 @@ td {
     vertical-align: middle;
     font-family: Tahoma, Geneva, sans-serif;
     font-size: 50px;
-    background-color: gainsboro;
+    background-color: gainsboro; /*TODO: set as image alternative*/
+    /*background-image: url('../images/flag.png');
+    background-size: contain;
+    background-repeat: no-repeat;*/
 }
 
 td:hover {
