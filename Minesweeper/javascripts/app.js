@@ -44,6 +44,22 @@ refreshTimer();
 //setInterval(refreshTimer, 1000);
 
 
+
+//Object constructors:
+
+
+function Cell(row, col, item) {
+    this.row = row;
+    this.col = col;
+    this.item = item; //DOM object reference
+    this.mineState = 'no-mine'; //∈ {'no-mine', 'MINE!'} TODO: enumarate?
+    this.clickState = 'not-clicked'; //∈ {'not-clicked', 'left-clicked', 'right-clicked'}
+}
+
+var testCell;
+console.log(testCell = new Cell('1', '2', getElementByRowCol(1,2) ));
+
+
 //----------------------------------------------------------------------------------
 //Function definitions:
 
