@@ -2,9 +2,9 @@
 /* jshint browser: true */
 
 //Initial play area dimensions. Set as desired.
-var numOfRows = 7,
-    numOfCols = 9,
-    numOfMines = 5,
+var numOfRows = 17,
+    numOfCols = 19,
+    numOfMines = 15,
     //clickSound = new Audio('../audio/click.mp3'), //feature creep?
 
 //Global variables. Don't change.
