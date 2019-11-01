@@ -2,9 +2,9 @@
 /* jshint browser: true */
 
 //Initial play area dimensions. Set as desired.
-var numOfRows = 17,
-    numOfCols = 19,
-    numOfMines = 15,
+var numOfRows = 7,
+    numOfCols = 9,
+    numOfMines = 5,
     //clickSound = new Audio('../audio/click.mp3'), //feature creep?
 
 //Global variables. Don't change.
@@ -26,14 +26,14 @@ seconds is the time past from the start of the game in seconds.
 firstClick is used so that the first click can't be on a mine.
 */
 
-    
+/*
 //Adding event listeners.
 document.querySelectorAll('.table-cell').forEach(function(item){
     item.addEventListener('click', function(event){ leftClickCell(item, event); });
     item.addEventListener('contextmenu', function(event){ rightClickCell(item, event); });
     item.addEventListener('mousedown', function(event){ middleClickWrapper(item, event, true); });
     item.addEventListener('mouseup', function(event){ middleClickWrapper(item, event, false); });
-});
+});*/
 document.getElementById('new-game').addEventListener('click', function(event){ newGame(); });
 
 //Display number of mines checked off.
@@ -54,6 +54,11 @@ function Cell(row, col, item) {
     this.item = item; //DOM object reference
     this.mineState = 'no-mine'; //∈ {'no-mine', 'MINE!'} TODO: enumarate?
     this.clickState = 'not-clicked'; //∈ {'not-clicked', 'left-clicked', 'right-clicked'}
+
+    this.item.addEventListener('click', function(event){ leftClickCell(item, event); });
+    this.item.addEventListener('contextmenu', function(event){ rightClickCell(item, event); });
+    this.item.addEventListener('mousedown', function(event){ middleClickWrapper(item, event, true); });
+    this.item.addEventListener('mouseup', function(event){ middleClickWrapper(item, event, false); });
 }
 
 var testCell;
@@ -76,6 +81,8 @@ function initializePlayArea(numOfCols, numOfRows){
             tableCell.classList.add('table-cell', 'noselect');
             tableCell.setAttribute('id' , i + ',' + j);
             tableRow.appendChild(tableCell);
+            //TODO
+            new Cell(i, j, tableCell);
             cells.push(['no-mine', 'not-clicked']); // cell = [mine state, click state]
         }
         table.appendChild(tableRow);
@@ -253,7 +260,7 @@ function gameLoss(){
     //Added timeout for chrome(ium) support. Otherwise no mine rendering takes place.
     setTimeout(function(){
         window.alert('Sorry, you just lost :(');
-        //newGame();
+        newGame();
     } ,100);
 }
 
