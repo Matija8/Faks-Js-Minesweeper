@@ -5,21 +5,15 @@
         <meta charset="UTF-8">
         <link href="stylesheets/style.css" rel="stylesheet" type="text/css">
     </head>
-    <body>
+    <body class='noselect'>
         <header>
-            <div id='new-game'              class='noselect'>New Game</div>
-            <div id='mine-number-display'   class='noselect'>        </div>
-            <div id='timer'                 class='noselect'>        </div>
+            <div id='new-game'>New Game</div>
+            <div id='mine-number-display'></div>
+            <div id='timer'></div>
         </header>
         <main>
-            <table id='play-area'>
+            <div id='play-area-container'>
                 <!-- app.js adds rows and columns dynamicly. -->
-            </table>
-            <div id='start-prompt'>
-                Left-click any cell to start. <br>
-                Middle-click - check adjacent cells. <br>
-                Right-click - place/remove mine flags. <br>
-                Good Luck :D
             </div>
         </main>
 

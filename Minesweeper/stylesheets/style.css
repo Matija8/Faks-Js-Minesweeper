@@ -13,47 +13,56 @@ header {
     /*text-align: center;*/
 }
 
+
 main {
     width: auto;
     clear: both;
 }
 
 
-table {
-    border: 3px solid black;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20px;
+#play-area {
+    margin: auto;
+    display: table;
+    clear: both;
+    overflow: auto;
 }
 
-td {
-    min-width: 60px;
-    min-height: 60px;
+
+.row {
+    clear: both;
+    overflow: auto;
+    display: table-row;
+    border: 3px solid black;
+}
+
+
+.cell {
+    display: table-cell;
+    
     width: 70px;
     height: 70px;
-    border: 2px solid black;
+    border: 1px solid black;
+
+    /* align text */
     text-align: center;
     vertical-align: middle;
+
+    /* font */
     font-family: Tahoma, Geneva, sans-serif;
-    font-size: 50px;
-    background-color: gainsboro; /*TODO: set as image alternative*/
-    /*background-image: url('../images/flag.png');
+    font-size: 20px;
+    
+    /* background */
+    background-color: gainsboro;
+    /*
+    background-image: url('../images/not-clicked.png');
     background-size: contain;
-    background-repeat: no-repeat;*/
+    */
 }
 
-td:hover {
+
+.cell:hover {
     cursor: pointer;
     /*box-shadow: 5px 10px #888888;*/
-}
-
-
-#start-prompt {
-    height: 60px;
-    margin: 25px;
-    text-align: center;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 35px;
 }
 
 
@@ -72,9 +81,11 @@ td:hover {
     margin-left: 100px;
 }
 
+
 #new-game:hover {
     cursor: pointer;
 }
+
 
 /* disable text selection.
 from: https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting */
