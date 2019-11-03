@@ -10,7 +10,7 @@ var numOfRows = 7,
 
 //Object constructors:
 class Game {
-    constructor(numOfRows, numOfCols, numOfMines) {
+    constructor(numOfRows, numOfCols, numOfMines){
         this.numOfLeftClicked = 0;
         this.numOfRightClicked = 0;
         this.seconds = 0;
@@ -20,7 +20,7 @@ class Game {
         this.setAdjacentCells(this.cellMatrix);
     }//constructor
 
-    initPlayArea() {
+    initPlayArea(){
         var tableDOM = document.createElement('div');
         tableDOM.setAttribute('id', 'play-area');
         for (var i = 0; i < numOfRows; i++) {
@@ -47,47 +47,73 @@ class Game {
         }
     }//setAdjacentCells
 
+    toString() {
+        
+    }
+
 }//class Game
 
 
 class Cell {
-    constructor(item) {
-        this.item = item; //DOM object reference
+    constructor(item, game){
+        this.item = item; //DOM object reference.
+        this.game = game; //Game object.
         this.mineState = 'no-mine'; // {'no-mine', 'MINE!'} 
         this.clickState = 'not-clicked'; // {'not-clicked', 'left-clicked', 'right-clicked'}
         this.adjacent = [];
-        this.item.addEventListener('mousedown', function (event) { mouseDown(item, event); });
-        this.item.addEventListener('mouseup', function (event) { mouseUp(item, event); });
-        function mouseDown(item, event) {
-            switch(event.button) {
-                case 0: //leftClick
-                    console.log('left');
-                    break;
-                case 1: //leftClick
-                    console.log('mid');
-                    break;
-                case 2: //leftClick
-                    console.log('right');
-                    break;
-            }
+        this.item.addEventListener('mousedown', (event) => { this.mouseDown(event); });
+        this.item.addEventListener('mouseup', (event) => { this.mouseUp(event); });
+        this.item.addEventListener('contextmenu', (event) => { event.preventDefault(); });
+    }
+
+    mouseDown(event){
+        switch(event.button) {
+            case 0:
+                this.leftDown(); break;
+            case 1:
+                this.midDown(); break;
+            case 2:
+                this.rightDown(event);break;
         }
-        function mouseUp(item, event) {
-            switch(event.button) {
-                case 0: //leftClick
-                    console.log('left');
-                    break;
-                case 1: //leftClick
-                    console.log('mid');
-                    break;
-                case 2: //leftClick
-                    console.log('right');
-                    break;
-            }
+    }
+
+    mouseUp(event){
+        switch(event.button) {
+            case 0:
+                this.leftUp(); break;
+            case 1:
+                this.midUp(); break;
+            case 2:
+                this.rightUp();break;
         }
+    }
+
+    leftDown(){
+        console.log('LeftDown');
+    }
+
+    leftUp(){
+        console.log('LeftUp');
+    }
+
+    midDown(){
+        console.log('MidDown');
+    }
+
+    midUp(){
+        console.log('MidUp');
+    }
+
+    rightDown(){
+        console.log('RightDown');
+    }
+
+    rightUp(){
+        console.log('RightUp');
     }
 }
 
 
 new Game(numOfRows, numOfCols, numOfMines);
 
-document.getElementById('new-game').addEventListener('click', function(event){ location.reload(); });
+document.getElementById('new-game').addEventListener('click', (event) => { location.reload(); });
