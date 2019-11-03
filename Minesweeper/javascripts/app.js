@@ -31,7 +31,7 @@ class Game {
                 cellDOM.classList.add('cell');
                 cellDOM.innerText = i + ',' + j;
                 rowDOM.appendChild(cellDOM);
-                row.push(new Cell(cellDOM));
+                row.push(new Cell(i, j, cellDOM, this));
             }
             this.cellMatrix.push(row);
             tableDOM.appendChild(rowDOM);
@@ -47,15 +47,25 @@ class Game {
         }
     }//setAdjacentCells
 
-    toString() {
-        
+    setRandomMines(){
+        logf('setMines called!');
+        //game.log();//TODO: Comment out after.
     }
+
+    log() {
+        this.cellMatrix.forEach((row) => {
+            row.forEach((cell) => {
+                logf(cell.toString());
+            });
+        });
+    }//log
 
 }//class Game
 
 
 class Cell {
-    constructor(item, game){
+    constructor(row, col, item, game){
+        this.row = row; this.col = col;
         this.item = item; //DOM object reference.
         this.game = game; //Game object.
         this.mineState = 'no-mine'; // {'no-mine', 'MINE!'} 
@@ -67,6 +77,7 @@ class Cell {
     }
 
     mouseDown(event){
+        logf(this.toString());
         switch(event.button) {
             case 0:
                 this.leftDown(); break;
@@ -89,31 +100,45 @@ class Cell {
     }
 
     leftDown(){
-        console.log('LeftDown');
+        logf('LeftDown');//TODO: Comment out after.
+
+        if(this.clickState === 'not-clicked'){
+            this.clickState = 'left-clicked';
+            if(game.firstClick){
+                game.firstClick = false;
+                game.setRandomMines();
+            }
+        }
     }
 
     leftUp(){
-        console.log('LeftUp');
+        logf('LeftUp');
     }
 
     midDown(){
-        console.log('MidDown');
+        logf('MidDown');
     }
 
     midUp(){
-        console.log('MidUp');
+        logf('MidUp');
     }
 
     rightDown(){
-        console.log('RightDown');
+        logf('RightDown');
     }
 
     rightUp(){
-        console.log('RightUp');
+        logf('RightUp');
+    }
+
+    toString(){
+        return this.row + ',' + this.col + ': {' + this.mineState + '}, {' + this.clickState + '}'; 
     }
 }
 
 
-new Game(numOfRows, numOfCols, numOfMines);
+var game = new Game(numOfRows, numOfCols, numOfMines);
 
 document.getElementById('new-game').addEventListener('click', (event) => { location.reload(); });
+
+function logf(msg) {console.log(msg)}
