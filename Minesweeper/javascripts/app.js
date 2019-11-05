@@ -6,7 +6,7 @@
 //Global game variables. Set as desired.
 const gNumOfRows = 7,
     gNumOfCols  = 7,
-    gNumOfMines = 12,
+    gNumOfMines = 11,
     gCellSize = '50px',
     gFontSize = '25px',
     
@@ -29,6 +29,7 @@ class Game {
         this.seconds            = 0;
         this.firstClick         = true; // Mines are set only on the first left-click.
         this.winSemaphore       = true; // Hack to prevent multiple wins on empty cell recursive left-click.
+        this.lossSemaphore      = true;
         this.mineNumberDisplay  = document.getElementById('mine-number-display');
         this.timerDisplay       = document.getElementById('timer');
         this.midDownFlag        = false;
@@ -107,24 +108,30 @@ class Game {
     }
 
     gameWin(){
-        setTimeout(() => {
-            window.alert('You WON! :D');
-            location.reload();
-        } ,100);
+        if(this.winSemaphore){
+            this.winSemaphore = false;
+            setTimeout(() => {
+                window.alert('You WON! :D');
+                location.reload();
+            } ,100);
+        }
     }
 
     gameLoss(){
-        this.cellMatrixToList().forEach(cell => {
-            if(cell.mineState === 'MINE!'){
-                //cell.css.backgroundColor = 'red';
-                //cell.item.innerHTML = '☢';
-                cell.css.backgroundImage = gImage_Mine;
-            }
-        });
-        setTimeout(() => {
-            window.alert('Sorry, you just lost :(');
-            location.reload();
-        } ,100);
+        if(this.lossSemaphore){
+            this.lossSemaphore = false;
+            this.cellMatrixToList().forEach(cell => {
+                if(cell.mineState === 'MINE!'){
+                    //cell.css.backgroundColor = 'red';
+                    //cell.item.innerHTML = '☢';
+                    cell.css.backgroundImage = gImage_Mine;
+                }
+            });
+            setTimeout(() => {
+                window.alert('Sorry, you just lost :(');
+                location.reload();
+            } ,100);
+        }
     }
 
 }//class Game
@@ -211,7 +218,6 @@ class Cell {
                     this.item.innerHTML = mineCount;
                 }
                 if(game.winCondition()){
-                    this.winSemaphore = false;
                     game.gameWin();
                 }
             }
