@@ -8,7 +8,13 @@ const gNumOfRows = 8,
     gNumOfCols  = 8,
     gNumOfMines = 12,
     gCellSize = '50px',
-    gFontSize = '25px';
+    gFontSize = '25px',
+    
+    gImage_NotClicked   = 'url("./images/not_clicked.png")',
+    gImage_LeftClick    = 'url("./images/left_clicked.png")',
+    gImage_Flag         = 'url("./images/flag.png")',
+    gImage_Mine         = 'url("./images/mine.png")',
+    gImage_Highlight    = 'url("./images/left_clicked.png")';
 
 
 //Object constructors:
@@ -25,6 +31,7 @@ class Game {
         this.winSemaphore       = true; // Hack to prevent multiple wins on empty cell recursive left-click.
         this.mineNumberDisplay  = document.getElementById('mine-number-display');
         this.timerDisplay       = document.getElementById('timer');
+        this.midActiveCell      = null; // The current mid clicked cell.
         this.cellMatrix         = [];
 
         this.initPlayArea();
@@ -109,8 +116,9 @@ class Game {
     gameLoss(){
         this.cellMatrixToList().forEach(cell => {
             if(cell.mineState === 'MINE!'){
-                cell.item.style.backgroundColor = 'red';
-                cell.item.innerHTML = '☢';
+                //cell.css.backgroundColor = 'red';
+                //cell.item.innerHTML = '☢';
+                cell.css.backgroundImage = gImage_Mine;
             }
         });
         setTimeout(() => {
@@ -135,9 +143,11 @@ class Cell {
         this.adjacentClear = [];
 
         //Setting cell css properties.
-        let css = this.item.style;
-        css.width = css.height = gCellSize;
-        css.fontSize = gFontSize;
+        this.css = this.item.style;
+        this.css.width = this.css.height = gCellSize;
+        this.css.fontSize = gFontSize;        
+        this.css.backgroundImage = gImage_NotClicked;
+        this.css.backgroundSize = 'contain';
         
         //Adding event listeners.
         this.item.addEventListener('mousedown', (event) => { this.mouseDown(event); });
@@ -189,6 +199,7 @@ class Cell {
             else {
                 game.numOfLeftClicked++;
                 this.item.style.background = 'grey';
+                this.css.backgroundImage = gImage_LeftClick;
                 let mineCount = this.countMines();
                 if(mineCount === 0){
                     this.adjacent.forEach(cell => cell.leftDown() );
@@ -216,20 +227,33 @@ class Cell {
     rightDown(){
         if(this.clickState === 'not-clicked'){
             this.clickState = 'right-clicked';
-            this.item.innerHTML = '🚩';
+            //this.item.innerHTML = '🚩';
+            this.css.backgroundImage = gImage_Flag;
             game.numOfRightClicked++;
             game.refreshFlagNumberDisplay();
         }
         else if(this.clickState === 'right-clicked'){
             this.clickState = 'not-clicked';
-            this.item.innerHTML = '';
+            //this.item.innerHTML = '';
+            this.css.backgroundImage = gImage_NotClicked;
             game.numOfRightClicked--;
             game.refreshFlagNumberDisplay();
         }
     }
 
     midDown(){
-        if(this.clickState === 'left-clicked'){
+        this.game.midActiveCell = this;
+        let highlightFlag = false;
+        if(this.clickState === 'not-clicked'){
+            highlightFlag = true;
+            this.adjacent.forEach(cell => {
+                if(cell.clickState === 'not-clicked'){
+                    this.adjacentClear.push(cell);
+                }
+            });
+            this.adjacentClear.push(this);
+        }
+        else if(this.clickState === 'left-clicked'){
             let numOfLocalMines = this.countMines();
             this.adjacent.forEach(cell => {
                 if(cell.clickState === 'right-clicked'){
@@ -239,24 +263,26 @@ class Cell {
                     this.adjacentClear.push(cell);
                 }
             });
-            let highlight = (numOfLocalMines !== 0);
-            this.adjacentClear.forEach(cell => {
-                if(highlight){
-                    cell.item.style.backgroundColor = "#FDFF47";
-                }
-                else {
-                    cell.leftDown();
-                }
-            });
-            if(!highlight){
-                this.adjacentClear = [];
-            }
+            highlightFlag = (numOfLocalMines !== 0);
+        }
+        if(highlightFlag){
+            this.adjacentClear.forEach(cell => highlight(cell) );
+        }
+        else{
+            this.adjacentClear.forEach(cell => cell.leftDown());
+            this.adjacentClear = [];
+        }
+
+        function highlight(cell) {
+            //cell.css.backgroundColor = "#FDFF47"; //TODO highlight color
+            cell.css.backgroundImage = gImage_Highlight;
         }
     }
 
     midUp(){
-        this.adjacentClear.forEach(cell => {
-            cell.item.style.backgroundColor = "gainsboro";
+        this.game.midActiveCell.adjacentClear.forEach(cell => {
+            cell.item.style.backgroundColor = "gainsboro"; //TODO default background color
+            cell.css.backgroundImage = gImage_NotClicked;
         });
         this.adjacentClear = [];
     }
