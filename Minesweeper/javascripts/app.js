@@ -20,13 +20,12 @@ const gNumOfRows = 7,
 //Object constructors:
 class Game {
     constructor(numOfRows, numOfCols, numOfMines){
-        //attributes
         this.numOfRows          = numOfRows;
         this.numOfCols          = numOfCols;
         this.numOfMines         = numOfMines;
         this.numOfLeftClicked   = 0;
         this.numOfRightClicked  = 0;
-        this.seconds            = 0;
+        this.startTime          = null;
         this.firstClick         = true; // Mines are set only on the first left-click.
         this.winSemaphore       = true; // Hack to prevent multiple wins on empty cell recursive left-click.
         this.lossSemaphore      = true;
@@ -38,7 +37,7 @@ class Game {
         this.initPlayArea();
         this.refreshFlagNumberDisplay();
         this.refreshTimer();
-    }//constructor
+    }
 
     initPlayArea(){
         const tableDOM = document.createElement('div');
@@ -58,9 +57,10 @@ class Game {
         }
         document.getElementById('play-area-container').appendChild(tableDOM);
 
-        //for each cell setAdjacentCells();
+        //for each cell: setAdjacentCells();
         this.cellMatrixToList().forEach(cell => { cell.setAdjacentCells(); } );
-    }//initPlayArea
+    }
+
 
     cellMatrixToList(){
         let cells = [];
@@ -77,11 +77,23 @@ class Game {
         this.mineNumberDisplay.innerHTML = `Flags: ${this.numOfRightClicked} / ${this.numOfMines}`;
     }
 
-    refreshTimer(){
-        this.timerDisplay.innerHTML = 'Time: ' + secondsToString(this.seconds);
-        this.seconds++;
-        function secondsToString(seconds){ return new Date(seconds * 1000).toISOString().substr(11, 8); }        
+
+    startTimer(){
+        this.startTime = Date.now();
+        setInterval(refreshTimerWrapper, 1000);
     }
+
+
+    refreshTimer(){
+        if(!this.startTime){
+            this.timerDisplay.innerHTML = 'Time: ' + new Date(0).toISOString().substr(11, 8);
+        }
+        else{
+            let timeElapsed = Date.now() - this.startTime;
+            this.timerDisplay.innerHTML = 'Time: ' + new Date (timeElapsed).toISOString().substr(11, 8);
+        }
+    }
+
 
     setRandomMines(firstMine){
         let mineChoices = this.cellMatrixToList();
@@ -92,6 +104,7 @@ class Game {
         //Check correct initial numOfMines.
         if(this.numOfMines > mineChoices.length){
             window.alert('ERROR: more mines than cells! Change app.js specs.');
+            this.numOfMines = 0;
             return;
         }
     
@@ -103,9 +116,11 @@ class Game {
         }
     }
 
+
     winCondition(){
         return (this.numOfLeftClicked === this.numOfCols * this.numOfRows - this.numOfMines) && this.winSemaphore;
     }
+
 
     gameWin(){
         if(this.winSemaphore){
@@ -116,6 +131,7 @@ class Game {
             } ,100);
         }
     }
+
 
     gameLoss(){
         if(this.lossSemaphore){
@@ -163,6 +179,7 @@ class Cell {
         this.item.addEventListener('mouseout', () => { this.mouseOut(); });
     }
 
+
     setAdjacentCells(){
         let [row, col]  = [this.row, this.col],
             leftCheck   = (col === 0)                ?   col : col-1,
@@ -180,6 +197,7 @@ class Cell {
         }
     }
 
+
     mouseDown(event){
         switch(event.button){
             case 0:
@@ -191,6 +209,7 @@ class Cell {
         }
     }
 
+
     leftDown(){
         if(this.game.midDownFlag){
             return;
@@ -201,7 +220,7 @@ class Cell {
             if(game.firstClick){
                 game.firstClick = false;
                 game.setRandomMines(this);
-                //startTimer(this.game); //TODO
+                this.game.startTimer();
             }
             if(this.mineState === 'MINE!'){
                 game.gameLoss();
@@ -224,6 +243,7 @@ class Cell {
         }
     }
 
+
     countMines(){
         let count = 0;
         this.adjacent.forEach(function(cell){
@@ -232,6 +252,7 @@ class Cell {
         });
         return count;
     }
+
 
     rightDown(){
         if(this.game.midDownFlag){
@@ -253,6 +274,7 @@ class Cell {
         }
     }
 
+
     midDown(){
         if(this.clickState === 'left-clicked'){
             let mineCount = this.countMines();
@@ -269,11 +291,13 @@ class Cell {
         this.mouseIn();
     }
 
+
     mouseIn(){
         if(this.game.midDownFlag){
             this.highlight();
         }
     }
+
 
     mouseOut(){
         if(this.game.midDownFlag){
@@ -281,10 +305,12 @@ class Cell {
         }
     }
 
+
     midUp(){
         this.unHighlight();
         this.game.midDownFlag = false;
     }
+
 
     highlight(){
         if(this.clickState === 'not-clicked'){
@@ -297,6 +323,7 @@ class Cell {
         });
     }
 
+
     unHighlight(){
         if(this.clickState === 'not-clicked'){
             this.css.backgroundImage = gImage_NotClicked;
@@ -307,14 +334,10 @@ class Cell {
             }
         });
     }
-
-    toString(){
-        return `[${this.row}, ${this.col}],  {${this.mineState}}, {${this.clickState}}`; 
-    }
-}
+}// class Cell
 
 
 const game = new Game(gNumOfRows, gNumOfCols, gNumOfMines);
 
-
+function refreshTimerWrapper() { game.refreshTimer(); }
 document.getElementById('new-game').addEventListener('click', (event) => { location.reload(); });
