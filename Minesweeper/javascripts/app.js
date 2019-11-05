@@ -3,7 +3,7 @@
 /*jshint esversion: 6 */
 
 //Initial play area dimensions. Set as desired.
-var numOfRows = 7,
+const numOfRows = 7,
     numOfCols = 9,
     numOfMines = 5;
 
@@ -11,23 +11,32 @@ var numOfRows = 7,
 //Object constructors:
 class Game {
     constructor(numOfRows, numOfCols, numOfMines){
-        this.numOfLeftClicked = 0;
-        this.numOfRightClicked = 0;
-        this.seconds = 0;
-        this.firstClick = true;
-        this.cellMatrix = [];
+        //attributes
+        this.numOfRows          = numOfRows;
+        this.numOfCols          = numOfCols;
+        this.numOfMines         = numOfMines;
+        this.numOfLeftClicked   = 0;
+        this.numOfRightClicked  = 0;
+        this.seconds            = 0;
+        this.firstClick         = true;
+        this.mineNumberDisplay  = document.getElementById('mine-number-display');
+        this.timerDisplay       = document.getElementById('timer');
+        this.cellMatrix         = [];
+
         this.initPlayArea();
-        this.setAdjacentCells(this.cellMatrix);
+        this.refreshFlagNumberDisplay();
+        this.refreshTimer();
     }//constructor
 
     initPlayArea(){
-        var tableDOM = document.createElement('div');
+        const tableDOM = document.createElement('div');
         tableDOM.setAttribute('id', 'play-area');
-        for (var i = 0; i < numOfRows; i++) {
-            var rowDOM = document.createElement('div'), row = [];
+        for (let i = 0; i < numOfRows; i++) {
+            const rowDOM = document.createElement('div');
             rowDOM.classList.add('row');
-            for (var j = 0; j < numOfCols; j++) {
-                var cellDOM = document.createElement('div');
+            let row = [];
+            for (let j = 0; j < numOfCols; j++) {
+                const cellDOM = document.createElement('div');
                 cellDOM.classList.add('cell');
                 cellDOM.innerText = i + ',' + j;
                 rowDOM.appendChild(cellDOM);
@@ -37,20 +46,36 @@ class Game {
             tableDOM.appendChild(rowDOM);
         }
         document.getElementById('play-area-container').appendChild(tableDOM);
+
+        //for each cell setAdjacentCells();
+        this.cellMatrixToList().forEach(cell => { /*logf(cell.toString());*/ cell.setAdjacentCells(); } );
     }//initPlayArea
 
-    setAdjacentCells(matrix) {
-        for (var i = 0; i < numOfRows; i++) {
-            for (var j = 0; j < numOfCols; j++) {
-                matrix[i][j].adjacent.push('test');
-            }
-        }
-    }//setAdjacentCells
-
-    setRandomMines(){
-        logf('setMines called!');
-        //game.log();//TODO: Comment out after.
+    cellMatrixToList(){
+        let cells = [];
+        this.cellMatrix.forEach(row => {
+            row.forEach(cell => {
+                cells.push(cell);
+            });
+        });
+        return cells;
     }
+
+
+    refreshFlagNumberDisplay(){
+        this.mineNumberDisplay.innerHTML = `Flags: ${this.numOfRightClicked} / ${this.numOfMines}`;
+    }
+
+    refreshTimer(){
+        this.timerDisplay.innerHTML = 'Time: ' + secondsToString(this.seconds);
+        this.seconds++;
+        function secondsToString(seconds){ return new Date(seconds * 1000).toISOString().substr(11, 8); }        
+    }
+
+    setRandomMines(firstMine){
+        logf('setMines called!' + firstMine.toString());
+        //game.log();//TODO: Comment out after.
+    }    
 
     log() {
         this.cellMatrix.forEach((row) => {
@@ -63,21 +88,42 @@ class Game {
 }//class Game
 
 
+
 class Cell {
     constructor(row, col, item, game){
-        this.row = row; this.col = col;
-        this.item = item; //DOM object reference.
-        this.game = game; //Game object.
-        this.mineState = 'no-mine'; // {'no-mine', 'MINE!'} 
+        this.row        = row;
+        this.col        = col;
+        this.item       = item; //DOM object reference.
+        this.game       = game; //Game object.
+        this.mineState  = 'no-mine'; // {'no-mine', 'MINE!'} 
         this.clickState = 'not-clicked'; // {'not-clicked', 'left-clicked', 'right-clicked'}
-        this.adjacent = [];
+        this.adjacent   = [];
+        
+        //Adding event listeners.
         this.item.addEventListener('mousedown', (event) => { this.mouseDown(event); });
         this.item.addEventListener('mouseup', (event) => { this.mouseUp(event); });
         this.item.addEventListener('contextmenu', (event) => { event.preventDefault(); });
     }
 
+    setAdjacentCells(){
+        let [row, col] = [this.row, this.col],
+            leftCheck = (col == 0) ? col : col-1,
+            rightCheck = (col == numOfCols-1) ? col : col+1,
+            topCheck = (row == 0) ? row : row-1,
+            bottomCheck = (row == numOfRows-1) ? row : row+1;
+            
+        for(let i = topCheck; i<=bottomCheck; i++){
+            for(let j = leftCheck; j<=rightCheck; j++){
+                if(i === row && j === col){
+                    continue;
+                }
+                this.adjacent.push(this.game.cellMatrix[i][j]);
+            }
+        }
+    }
+
     mouseDown(event){
-        logf(this.toString());
+        logf(this.adjacent);
         switch(event.button) {
             case 0:
                 this.leftDown(); break;
@@ -106,7 +152,8 @@ class Cell {
             this.clickState = 'left-clicked';
             if(game.firstClick){
                 game.firstClick = false;
-                game.setRandomMines();
+                game.setRandomMines(this);
+                //startTimer(this.game); //TODO
             }
         }
     }
@@ -132,12 +179,13 @@ class Cell {
     }
 
     toString(){
-        return this.row + ',' + this.col + ': {' + this.mineState + '}, {' + this.clickState + '}'; 
+        return `[${this.row}, ${this.col}],  {${this.mineState}}, {${this.clickState}}`; 
     }
 }
 
 
-var game = new Game(numOfRows, numOfCols, numOfMines);
+const game = new Game(numOfRows, numOfCols, numOfMines);
+
 
 document.getElementById('new-game').addEventListener('click', (event) => { location.reload(); });
 
