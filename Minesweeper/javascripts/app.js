@@ -14,7 +14,7 @@ const gNumOfRows = 8,
     gImage_LeftClick    = 'url("./images/left_clicked.png")',
     gImage_Flag         = 'url("./images/flag.png")',
     gImage_Mine         = 'url("./images/mine.png")',
-    gImage_Highlight    = 'url("./images/left_clicked.png")';
+    gImage_Highlight    = 'url("./images/highlighted.png")';
 
 
 //Object constructors:
@@ -244,14 +244,16 @@ class Cell {
     midDown(){
         this.game.midActiveCell = this;
         let highlightFlag = false;
-        if(this.clickState === 'not-clicked'){
+        if(this.clickState !== 'left-clicked'){
             highlightFlag = true;
             this.adjacent.forEach(cell => {
                 if(cell.clickState === 'not-clicked'){
                     this.adjacentClear.push(cell);
                 }
             });
-            this.adjacentClear.push(this);
+            if(this.clickState === 'not-clicked'){
+                this.adjacentClear.push(this);
+            }
         }
         else if(this.clickState === 'left-clicked'){
             let numOfLocalMines = this.countMines();
