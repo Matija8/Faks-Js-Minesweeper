@@ -1,5 +1,6 @@
 'use strict';
 /* jshint browser: true */
+/* jshint node: true */
 /*jshint esversion: 6 */
 
 //Initial play area dimensions. Set as desired.
@@ -18,7 +19,8 @@ class Game {
         this.numOfLeftClicked   = 0;
         this.numOfRightClicked  = 0;
         this.seconds            = 0;
-        this.firstClick         = true;
+        this.firstClick         = true; // Mines are set only on the first left-click.
+        this.winSemaphore       = true; // Hack to prevent multiple wins on empty cell recursive left-click.
         this.mineNumberDisplay  = document.getElementById('mine-number-display');
         this.timerDisplay       = document.getElementById('timer');
         this.cellMatrix         = [];
@@ -93,12 +95,14 @@ class Game {
     }
 
     winCondition(){
-        return this.numOfLeftClicked === this.numOfCols * this.numOfRows - this.numOfMines;
+        return (this.numOfLeftClicked === this.numOfCols * this.numOfRows - this.numOfMines) && this.winSemaphore;
     }
 
     gameWin(){
-        window.alert('You WON! :D');
-        location.reload();
+        setTimeout(() => {
+            window.alert('You WON! :D');
+            location.reload();
+        } ,100);
     }
 
     gameLoss(){
@@ -187,6 +191,7 @@ class Cell {
                     this.item.innerHTML = mineCount;
                 }
                 if(game.winCondition()){
+                    this.winSemaphore = false;
                     game.gameWin();
                 }
             }
@@ -260,4 +265,4 @@ const game = new Game(numOfRows, numOfCols, numOfMines);
 
 document.getElementById('new-game').addEventListener('click', (event) => { location.reload(); });
 
-function logf(msg) {console.log(msg)}
+function logf(msg) {console.log(msg);}
