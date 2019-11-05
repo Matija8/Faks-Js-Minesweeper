@@ -38,7 +38,6 @@ class Game {
             for (let j = 0; j < numOfCols; j++) {
                 const cellDOM = document.createElement('div');
                 cellDOM.classList.add('cell');
-                cellDOM.innerText = i + ',' + j;
                 rowDOM.appendChild(cellDOM);
                 row.push(new Cell(i, j, cellDOM, this));
             }
@@ -74,16 +73,44 @@ class Game {
 
     setRandomMines(firstMine){
         logf('setMines called!' + firstMine.toString());
-        //game.log();//TODO: Comment out after.
-    }    
+        let mineChoices = game.cellMatrixToList();
 
-    log() {
-        this.cellMatrix.forEach((row) => {
-            row.forEach((cell) => {
-                logf(cell.toString());
-            });
+        //remove firstMine from choices.
+        mineChoices.splice(firstMine.row*numOfCols + firstMine.col, 1);
+
+        //Check correct initial numOfMines.
+        if(numOfMines > mineChoices.length){
+            window.alert('ERROR: more mines than cells! Change app.js specs.');
+            return;
+        }
+    
+        //Picks n mines from leftover cell choices.
+        for(let i = 0; i<numOfMines; i++){
+            let randInt = Math.floor(Math.random() * mineChoices.length); //random number in [0, n).
+            mineChoices[randInt].mineState = 'MINE!';
+            mineChoices.splice(randInt, 1); //remove selected cell from mine choices.
+        }
+    }
+
+    winCondition(){
+        return this.numOfLeftClicked === this.numOfCols * this.numOfRows - this.numOfMines;
+    }
+
+    gameWin(){
+        window.alert('You WON! :D');
+        location.reload();
+    }
+
+    gameLoss(){
+        this.cellMatrixToList().forEach(cell => {
+            if(cell.mineState === 'MINE!'){
+                cell.item.style.backgroundColor = 'red';
+                cell.item.innerHTML = '☢';
+            }
         });
-    }//log
+        window.alert('You hit a mine :(');
+        setTimeout(location.reload(), 100); //TODO
+    }
 
 }//class Game
 
@@ -98,10 +125,11 @@ class Cell {
         this.mineState  = 'no-mine'; // {'no-mine', 'MINE!'} 
         this.clickState = 'not-clicked'; // {'not-clicked', 'left-clicked', 'right-clicked'}
         this.adjacent   = [];
+        this.adjacentClear = [];
         
         //Adding event listeners.
         this.item.addEventListener('mousedown', (event) => { this.mouseDown(event); });
-        this.item.addEventListener('mouseup', (event) => { this.mouseUp(event); });
+        this.item.addEventListener('mouseup', (event) => { if(event.button === 1) this.midUp(); });
         this.item.addEventListener('contextmenu', (event) => { event.preventDefault(); });
     }
 
@@ -123,30 +151,18 @@ class Cell {
     }
 
     mouseDown(event){
-        logf(this.adjacent);
-        switch(event.button) {
+        switch(event.button){
             case 0:
                 this.leftDown(); break;
             case 1:
                 this.midDown(); break;
             case 2:
-                this.rightDown(event);break;
-        }
-    }
-
-    mouseUp(event){
-        switch(event.button) {
-            case 0:
-                this.leftUp(); break;
-            case 1:
-                this.midUp(); break;
-            case 2:
-                this.rightUp();break;
+                this.rightDown(); break;
         }
     }
 
     leftDown(){
-        logf('LeftDown');//TODO: Comment out after.
+        let game = this.game;
 
         if(this.clickState === 'not-clicked'){
             this.clickState = 'left-clicked';
@@ -155,27 +171,80 @@ class Cell {
                 game.setRandomMines(this);
                 //startTimer(this.game); //TODO
             }
+            if(this.mineState === 'MINE!'){
+                game.gameLoss();
+            }
+            else {
+                game.numOfLeftClicked++;
+                this.item.style.background = 'grey';
+                let mineCount = this.countMines();
+                if(mineCount === 0){
+                    this.adjacent.forEach(cell => cell.leftDown() );
+                }
+                else {
+                    this.item.innerHTML = mineCount;
+                }
+                if(game.winCondition()){
+                    game.gameWin();
+                }
+            }
         }
     }
 
-    leftUp(){
-        logf('LeftUp');
-    }
-
-    midDown(){
-        logf('MidDown');
-    }
-
-    midUp(){
-        logf('MidUp');
+    countMines(){
+        let count = 0;
+        this.adjacent.forEach(function(cell){
+            if(cell.mineState === 'MINE!')
+                count++;
+        });
+        return count;
     }
 
     rightDown(){
-        logf('RightDown');
+        if(this.clickState === 'not-clicked'){
+            this.clickState = 'right-clicked';
+            this.item.innerHTML = '🚩';
+            game.numOfRightClicked++;
+            game.refreshFlagNumberDisplay();
+        }
+        else if(this.clickState === 'right-clicked'){
+            this.clickState = 'not-clicked';
+            this.item.innerHTML = '';
+            game.numOfRightClicked--;
+            game.refreshFlagNumberDisplay();
+        }
     }
 
-    rightUp(){
-        logf('RightUp');
+    midDown(){
+        if(this.clickState === 'left-clicked'){
+            let numOfLocalMines = this.countMines();
+            this.adjacent.forEach(cell => {
+                if(cell.clickState === 'right-clicked'){
+                    numOfLocalMines--;
+                }
+                else if(cell.clickState === 'not-clicked'){
+                    this.adjacentClear.push(cell);
+                }
+            });
+            let highlight = (numOfLocalMines !== 0);
+            this.adjacentClear.forEach(cell => {
+                if(highlight){
+                    cell.item.style.backgroundColor = "#FDFF47";
+                }
+                else {
+                    cell.leftDown();
+                }
+            });
+            if(!highlight){
+                this.adjacentClear = [];
+            }
+        }
+    }
+
+    midUp(){
+        this.adjacentClear.forEach(cell => {
+            cell.item.style.backgroundColor = "gainsboro";
+        });
     }
 
     toString(){
