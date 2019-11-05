@@ -4,11 +4,11 @@
 /*jshint esversion: 6 */
 
 //Global game variables. Set as desired.
-const gNumOfRows = 7,
-    gNumOfCols  = 7,
-    gNumOfMines = 11,
-    gCellSize = '50px',
-    gFontSize = '25px',
+const gNumOfRows = 16,
+    gNumOfCols  = 16,
+    gNumOfMines = 40,
+    gCellSize = '30px',
+    gFontSize = '22px',
     
     gImage_NotClicked   = 'url("./images/not_clicked.png")',
     gImage_LeftClick    = 'url("./images/left_clicked.png")',
