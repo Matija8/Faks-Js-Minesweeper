@@ -4,8 +4,8 @@
 /*jshint esversion: 6 */
 
 //Global game variables. Set as desired.
-const gNumOfRows = 8,
-    gNumOfCols  = 8,
+const gNumOfRows = 7,
+    gNumOfCols  = 7,
     gNumOfMines = 12,
     gCellSize = '50px',
     gFontSize = '25px',
@@ -31,7 +31,7 @@ class Game {
         this.winSemaphore       = true; // Hack to prevent multiple wins on empty cell recursive left-click.
         this.mineNumberDisplay  = document.getElementById('mine-number-display');
         this.timerDisplay       = document.getElementById('timer');
-        this.midActiveCell      = null; // The current mid clicked cell.
+        this.midDownFlag        = false;
         this.cellMatrix         = [];
 
         this.initPlayArea();
@@ -140,7 +140,6 @@ class Cell {
         this.mineState  = 'no-mine'; // {'no-mine', 'MINE!'} 
         this.clickState = 'not-clicked'; // {'not-clicked', 'left-clicked', 'right-clicked'}
         this.adjacent   = [];
-        this.adjacentClear = [];
 
         //Setting cell css properties.
         this.css = this.item.style;
@@ -153,6 +152,8 @@ class Cell {
         this.item.addEventListener('mousedown', (event) => { this.mouseDown(event); });
         this.item.addEventListener('mouseup', (event) => { if(event.button === 1) this.midUp(); });
         this.item.addEventListener('contextmenu', (event) => { event.preventDefault(); });
+        this.item.addEventListener('mouseenter', () => { this.mouseIn(); });
+        this.item.addEventListener('mouseout', () => { this.mouseOut(); });
     }
 
     setAdjacentCells(){
@@ -184,8 +185,10 @@ class Cell {
     }
 
     leftDown(){
+        if(this.game.midDownFlag){
+            return;
+        }
         let game = this.game;
-
         if(this.clickState === 'not-clicked'){
             this.clickState = 'left-clicked';
             if(game.firstClick){
@@ -225,6 +228,9 @@ class Cell {
     }
 
     rightDown(){
+        if(this.game.midDownFlag){
+            return;
+        }
         if(this.clickState === 'not-clicked'){
             this.clickState = 'right-clicked';
             //this.item.innerHTML = '🚩';
@@ -242,51 +248,58 @@ class Cell {
     }
 
     midDown(){
-        this.game.midActiveCell = this;
-        let highlightFlag = false;
-        if(this.clickState !== 'left-clicked'){
-            highlightFlag = true;
-            this.adjacent.forEach(cell => {
-                if(cell.clickState === 'not-clicked'){
-                    this.adjacentClear.push(cell);
+        if(this.clickState === 'left-clicked'){
+            let mineCount = this.countMines();
+            this.adjacent.forEach( adj => {
+                if(adj.clickState === 'right-clicked'){
+                    mineCount--;
                 }
             });
-            if(this.clickState === 'not-clicked'){
-                this.adjacentClear.push(this);
+            if(mineCount === 0){
+                this.adjacent.forEach(cell => cell.leftDown() );
             }
         }
-        else if(this.clickState === 'left-clicked'){
-            let numOfLocalMines = this.countMines();
-            this.adjacent.forEach(cell => {
-                if(cell.clickState === 'right-clicked'){
-                    numOfLocalMines--;
-                }
-                else if(cell.clickState === 'not-clicked'){
-                    this.adjacentClear.push(cell);
-                }
-            });
-            highlightFlag = (numOfLocalMines !== 0);
-        }
-        if(highlightFlag){
-            this.adjacentClear.forEach(cell => highlight(cell) );
-        }
-        else{
-            this.adjacentClear.forEach(cell => cell.leftDown());
-            this.adjacentClear = [];
-        }
+        this.game.midDownFlag = true;
+        this.mouseIn();
+    }
 
-        function highlight(cell) {
-            //cell.css.backgroundColor = "#FDFF47"; //TODO highlight color
-            cell.css.backgroundImage = gImage_Highlight;
+    mouseIn(){
+        if(this.game.midDownFlag){
+            this.highlight();
+        }
+    }
+
+    mouseOut(){
+        if(this.game.midDownFlag){
+            this.unHighlight();
         }
     }
 
     midUp(){
-        this.game.midActiveCell.adjacentClear.forEach(cell => {
-            cell.item.style.backgroundColor = "gainsboro"; //TODO default background color
-            cell.css.backgroundImage = gImage_NotClicked;
+        this.unHighlight();
+        this.game.midDownFlag = false;
+    }
+
+    highlight(){
+        if(this.clickState === 'not-clicked'){
+            this.css.backgroundImage = gImage_Highlight;
+        }
+        this.adjacent.forEach( adj => {
+            if(adj.clickState === 'not-clicked'){
+                adj.css.backgroundImage = gImage_Highlight;
+            }
         });
-        this.adjacentClear = [];
+    }
+
+    unHighlight(){
+        if(this.clickState === 'not-clicked'){
+            this.css.backgroundImage = gImage_NotClicked;
+        }
+        this.adjacent.forEach( adj => {
+            if(adj.clickState === 'not-clicked'){
+                adj.css.backgroundImage = gImage_NotClicked;
+            }
+        });
     }
 
     toString(){
