@@ -10,7 +10,6 @@ header {
     width: auto;
     margin: auto;
     border-radius: 10px;
-    /*text-align: center;*/
 }
 
 
@@ -39,8 +38,9 @@ main {
 .cell {
     display: table-cell;
     
-    width: 70px;
-    height: 70px;
+    /*dimensions; app.js overwrites this*/
+    width:  60px;
+    height: 60px;
     border: 1px solid black;
 
     /* align text */

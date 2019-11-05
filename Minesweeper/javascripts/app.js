@@ -3,10 +3,12 @@
 /* jshint node: true */
 /*jshint esversion: 6 */
 
-//Initial play area dimensions. Set as desired.
-const numOfRows = 7,
-    numOfCols = 9,
-    numOfMines = 5;
+//Global game variables. Set as desired.
+const gNumOfRows = 8,
+    gNumOfCols  = 8,
+    gNumOfMines = 12,
+    gCellSize = '50px',
+    gFontSize = '25px';
 
 
 //Object constructors:
@@ -33,11 +35,11 @@ class Game {
     initPlayArea(){
         const tableDOM = document.createElement('div');
         tableDOM.setAttribute('id', 'play-area');
-        for (let i = 0; i < numOfRows; i++) {
+        for (let i = 0; i < this.numOfRows; i++) {
             const rowDOM = document.createElement('div');
             rowDOM.classList.add('row');
             let row = [];
-            for (let j = 0; j < numOfCols; j++) {
+            for (let j = 0; j < this.numOfCols; j++) {
                 const cellDOM = document.createElement('div');
                 cellDOM.classList.add('cell');
                 rowDOM.appendChild(cellDOM);
@@ -49,7 +51,7 @@ class Game {
         document.getElementById('play-area-container').appendChild(tableDOM);
 
         //for each cell setAdjacentCells();
-        this.cellMatrixToList().forEach(cell => { /*logf(cell.toString());*/ cell.setAdjacentCells(); } );
+        this.cellMatrixToList().forEach(cell => { cell.setAdjacentCells(); } );
     }//initPlayArea
 
     cellMatrixToList(){
@@ -74,20 +76,19 @@ class Game {
     }
 
     setRandomMines(firstMine){
-        logf('setMines called!' + firstMine.toString());
-        let mineChoices = game.cellMatrixToList();
+        let mineChoices = this.cellMatrixToList();
 
         //remove firstMine from choices.
-        mineChoices.splice(firstMine.row*numOfCols + firstMine.col, 1);
+        mineChoices.splice(firstMine.row*this.numOfCols + firstMine.col, 1);
 
         //Check correct initial numOfMines.
-        if(numOfMines > mineChoices.length){
+        if(this.numOfMines > mineChoices.length){
             window.alert('ERROR: more mines than cells! Change app.js specs.');
             return;
         }
     
         //Picks n mines from leftover cell choices.
-        for(let i = 0; i<numOfMines; i++){
+        for(let i = 0; i<this.numOfMines; i++){
             let randInt = Math.floor(Math.random() * mineChoices.length); //random number in [0, n).
             mineChoices[randInt].mineState = 'MINE!';
             mineChoices.splice(randInt, 1); //remove selected cell from mine choices.
@@ -132,6 +133,11 @@ class Cell {
         this.clickState = 'not-clicked'; // {'not-clicked', 'left-clicked', 'right-clicked'}
         this.adjacent   = [];
         this.adjacentClear = [];
+
+        //Setting cell css properties.
+        let css = this.item.style;
+        css.width = css.height = gCellSize;
+        css.fontSize = gFontSize;
         
         //Adding event listeners.
         this.item.addEventListener('mousedown', (event) => { this.mouseDown(event); });
@@ -140,11 +146,11 @@ class Cell {
     }
 
     setAdjacentCells(){
-        let [row, col] = [this.row, this.col],
-            leftCheck = (col == 0) ? col : col-1,
-            rightCheck = (col == numOfCols-1) ? col : col+1,
-            topCheck = (row == 0) ? row : row-1,
-            bottomCheck = (row == numOfRows-1) ? row : row+1;
+        let [row, col]  = [this.row, this.col],
+            leftCheck   = (col === 0)                ?   col : col-1,
+            rightCheck  = (col === this.game.numOfCols-1) ?   col : col+1,
+            topCheck    = (row === 0)                ?   row : row-1,
+            bottomCheck = (row === this.game.numOfRows-1) ?   row : row+1;
             
         for(let i = topCheck; i<=bottomCheck; i++){
             for(let j = leftCheck; j<=rightCheck; j++){
@@ -252,6 +258,7 @@ class Cell {
         this.adjacentClear.forEach(cell => {
             cell.item.style.backgroundColor = "gainsboro";
         });
+        this.adjacentClear = [];
     }
 
     toString(){
@@ -260,9 +267,7 @@ class Cell {
 }
 
 
-const game = new Game(numOfRows, numOfCols, numOfMines);
+const game = new Game(gNumOfRows, gNumOfCols, gNumOfMines);
 
 
 document.getElementById('new-game').addEventListener('click', (event) => { location.reload(); });
-
-function logf(msg) {console.log(msg);}
