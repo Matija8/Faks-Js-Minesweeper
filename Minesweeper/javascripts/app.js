@@ -108,8 +108,10 @@ class Game {
                 cell.item.innerHTML = '☢';
             }
         });
-        window.alert('You hit a mine :(');
-        setTimeout(location.reload(), 100); //TODO
+        setTimeout(() => {
+            window.alert('Sorry, you just lost :(');
+            location.reload();
+        } ,100);
     }
 
 }//class Game
