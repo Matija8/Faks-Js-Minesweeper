@@ -7,14 +7,16 @@
 const gNumOfRows = 16,
     gNumOfCols  = 16,
     gNumOfMines = 40,
-    gCellSize = '30px',
+    gCellSize = '35px',
     gFontSize = '22px',
     
     gImage_NotClicked   = 'url("./images/not_clicked.png")',
     gImage_LeftClick    = 'url("./images/left_clicked.png")',
     gImage_Flag         = 'url("./images/flag.png")',
+    gImage_Highlight    = 'url("./images/highlighted.png")',
     gImage_Mine         = 'url("./images/mine.png")',
-    gImage_Highlight    = 'url("./images/highlighted.png")';
+    gImage_FlaggedWrong  = 'url("./images/mine_wrong.png")',
+    gImage_ClickedMine  = 'url("./images/mine_clicked.png")';
 
 
 //Object constructors:
@@ -133,16 +135,16 @@ class Game {
     }
 
 
-    gameLoss(){
+    gameLoss(clickedMine){
         if(this.lossSemaphore){
             this.lossSemaphore = false;
             this.cellMatrixToList().forEach(cell => {
-                if(cell.mineState === 'MINE!'){
-                    //cell.css.backgroundColor = 'red';
-                    //cell.item.innerHTML = '☢';
-                    cell.css.backgroundImage = gImage_Mine;
-                }
+                if(cell.mineState === 'MINE!' && cell.clickState !== 'right-clicked'){
+                    cell.css.backgroundImage = gImage_Mine;}
+                else if(cell.clickState === 'right-clicked' && cell.mineState !== 'MINE!'){
+                    cell.css.backgroundImage = gImage_FlaggedWrong;}
             });
+            clickedMine.css.backgroundImage = gImage_ClickedMine;
             setTimeout(() => {
                 window.alert('Sorry, you just lost :(');
                 location.reload();
@@ -223,7 +225,7 @@ class Cell {
                 this.game.startTimer();
             }
             if(this.mineState === 'MINE!'){
-                game.gameLoss();
+                game.gameLoss(this);
             }
             else {
                 game.numOfLeftClicked++;
