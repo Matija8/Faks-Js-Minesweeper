@@ -4,9 +4,9 @@
 /*jshint esversion: 6 */
 
 //Global game variables. Set as desired.
-const gNumOfRows = 16,
-    gNumOfCols  = 16,
-    gNumOfMines = 40,
+const gNumOfRows = 5,
+    gNumOfCols  = 5,
+    gNumOfMines = 1,
     gCellSize = '35px',
     gFontSize = '22px',
     
@@ -127,10 +127,10 @@ class Game {
     gameWin(){
         if(this.winSemaphore){
             this.winSemaphore = false;
-            setTimeout(() => {
-                window.alert('You WON! :D');
-                location.reload();
-            } ,100);
+            this.cellMatrixToList().forEach(cell => {
+                cell.removeListeners();
+            });
+            window.alert('You WON! :D');
         }
     }
 
@@ -139,6 +139,7 @@ class Game {
         if(this.lossSemaphore){
             this.lossSemaphore = false;
             this.cellMatrixToList().forEach(cell => {
+                cell.removeListeners();
                 if(cell.mineState === 'MINE!' && cell.clickState !== 'right-clicked'){
                     cell.css.backgroundImage = gImage_Mine;}
                 else if(cell.clickState === 'right-clicked' && cell.mineState !== 'MINE!'){
@@ -147,7 +148,6 @@ class Game {
             clickedMine.css.backgroundImage = gImage_ClickedMine;
             setTimeout(() => {
                 window.alert('Sorry, you just lost :(');
-                location.reload();
             } ,100);
         }
     }
@@ -174,11 +174,16 @@ class Cell {
         this.css.backgroundSize = 'contain';
         
         //Adding event listeners.
-        this.item.addEventListener('mousedown', (event) => { this.mouseDown(event); });
-        this.item.addEventListener('mouseup', (event) => { if(event.button === 1) this.midUp(); });
-        this.item.addEventListener('contextmenu', (event) => { event.preventDefault(); });
-        this.item.addEventListener('mouseenter', () => { this.mouseIn(); });
-        this.item.addEventListener('mouseout', () => { this.mouseOut(); });
+        this.listenerFunctions = [];
+        this.listenerFunctions.push([ 'mousedown', (event) => { this.mouseDown(event)} ]);
+        this.listenerFunctions.push([ 'mouseup', (event) => { if(event.button === 1) this.midUp(); } ]);
+        this.listenerFunctions.push([ 'contextmenu', (event) => { event.preventDefault(); } ]);
+        this.listenerFunctions.push([ 'mouseenter', () => { this.mouseIn(); } ]);
+        this.listenerFunctions.push([ 'mouseout', () => { this.mouseOut(); } ]);
+        
+        this.listenerFunctions.forEach(pair => {
+            this.item.addEventListener(...pair);
+        });
     }
 
 
@@ -336,10 +341,20 @@ class Cell {
             }
         });
     }
+
+    removeListeners(){
+        this.listenerFunctions.forEach(pair => {
+            this.item.removeEventListener(...pair);
+        });
+    }
 }// class Cell
 
 
 const game = new Game(gNumOfRows, gNumOfCols, gNumOfMines);
 
 function refreshTimerWrapper() { game.refreshTimer(); }
-document.getElementById('new-game').addEventListener('click', (event) => { location.reload(); });
+document.getElementById('new-game').addEventListener('click', (event) => { newGame(game); });
+
+function newGame (game) {
+    location.reload(); //TODO
+}
