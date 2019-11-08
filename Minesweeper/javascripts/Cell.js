@@ -21,15 +21,26 @@ class Cell {
         this.css.fontSize = this.style.fontSize;
         this.css.backgroundImage = this.style.image_NotClicked;
         this.css.backgroundSize = 'contain';
-        
-        //Adding event listeners.
+        this.setListeners();
+        this.item.addEventListener('contextmenu', event => { event.preventDefault(); }); // Deliberately removed from other listeners.
+    }
+
+
+    setListeners(){
         this.listenerFunctions = [];
         this.listenerFunctions.push([ 'mousedown',   event => { this.mouseDown(event); } ]);
         this.listenerFunctions.push([ 'mouseup',     event => { if(event.button === 1) this.midUp(); } ]);
         this.listenerFunctions.push([ 'mouseenter',  ()    => { this.mouseIn();  } ]);
         this.listenerFunctions.push([ 'mouseout',    ()    => { this.mouseOut(); } ]);
-        this.listenerFunctions.push([ 'contextmenu', event => { event.preventDefault(); } ]);
+        //this.listenerFunctions.push([ 'contextmenu', event => { event.preventDefault(); } ]);
         this.listenerFunctions.forEach(pair => { this.item.addEventListener(...pair);});
+    }
+
+
+    removeListeners(){
+        this.listenerFunctions.forEach(pair => {
+            this.item.removeEventListener(...pair);
+        });
     }
 
 
@@ -183,12 +194,6 @@ class Cell {
             if(adj.clickState === 'not-clicked'){
                 adj.css.backgroundImage = this.style.image_NotClicked;
             }
-        });
-    }
-
-    removeListeners(){
-        this.listenerFunctions.forEach(pair => {
-            this.item.removeEventListener(...pair);
         });
     }
 }

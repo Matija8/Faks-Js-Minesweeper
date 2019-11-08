@@ -21,8 +21,8 @@ main {
 
 #play-area {
     margin: auto;
-    display: table;
-    /*display: hidden;*/
+    /*display: table;*/
+    display: hidden;
     clear: both;
     overflow: auto;
 }

@@ -3,6 +3,7 @@
 /* jshint node: true */
 /*jshint esversion: 6 */
 
+
 class Style {
     constructor(cellSize = '35px', fontSize = '22px'){
         this.cellSize               = cellSize;

@@ -10,17 +10,19 @@ class Game {
         this.numOfCols          = numOfCols;
         this.numOfMines         = numOfMines;
         this.style              = style; // Style class.
-        this.numOfLeftClicked   = 0;
-        this.numOfRightClicked  = 0;
-        this.firstClick         = true; // Mines are set only on the first left-click.
-        this.winSemaphore       = true; // Hack to prevent multiple wins on empty cell recursive left-click.
-        this.lossSemaphore      = true; // TODO?
+        this.playArea           = document.createElement('div');
         this.mineNumberDisplay  = document.getElementById('mine-number-display');
         this.timerDisplay       = document.getElementById('timer');
+        this.numOfLeftClicked   = 0;
+        this.numOfRightClicked  = 0;
+        this.winSemaphore       = true; // Hack to prevent multiple wins on empty cell recursive left-click.
+        this.lossSemaphore      = true; // TODO?
+        this.listenersRemoved   = false;
+        this.firstClick         = true; // Mines are set only on the first left-click.
+        this.midDownFlag        = false;
         this.startTime          = null;
         this.runningTimer       = null;
         this.endTime            = null;
-        this.midDownFlag        = false;
         this.cellMatrix         = [];
 
         [this.mineNumberDisplay, this.timerDisplay].forEach(domElement => {
@@ -32,10 +34,8 @@ class Game {
     }
 
 
-    //TODO: make a seprate DOM maker class?
     initPlayArea(){
-        const tableDOM = document.createElement('div');
-        tableDOM.setAttribute('id', 'play-area');
+        this.playArea.setAttribute('id', 'play-area');
         for (let i = 0; i < this.numOfRows; i++) {
             const rowDOM = document.createElement('div');
             rowDOM.classList.add('row');
@@ -47,10 +47,11 @@ class Game {
                 row.push(new Cell(i, j, cellDOM, this)); //TODO: import Cell?
             }
             this.cellMatrix.push(row);
-            tableDOM.appendChild(rowDOM);
+            this.playArea.appendChild(rowDOM);
         }
-        document.getElementById('play-area-container').appendChild(tableDOM);
+        document.getElementById('play-area-container').appendChild(this.playArea);
         this.cellMatrixToList().forEach(cell => { cell.setAdjacentCells(); } );
+        this.playArea.style.display = 'table';
     }
 
 
@@ -114,7 +115,7 @@ class Game {
         setTimeout(() => {
             window.alert('You WON! :D\n Your time is: ' + accurateTime(this.endTime)); //TODO Chromium bug: promises?
         } ,100);
-        //Send win time to the server via ajax...
+        //Send win time to the server (Node.js) via ajax...
 
         function accurateTime(time){return (new Date(time)).toISOString().substr(11, 12);}
     }
@@ -144,5 +145,34 @@ class Game {
         this.cellMatrixToList().forEach(cell => {
             cell.removeListeners();
         });
+        this.listenersRemoved = true;
+    }
+
+
+    reInit(){
+        //this.playArea.style.display = 'hidden'; //TODO!
+        this.stopTimer();
+        this.timerDisplay.innerHTML = 'Time: ' + this.timeToString(0);
+
+        this.numOfLeftClicked   = 0;
+        this.numOfRightClicked  = 0;
+        this.firstClick         = true;
+        this.winSemaphore       = true;
+        this.lossSemaphore      = true;
+        this.midDownFlag        = false;
+        this.refreshFlagNumberDisplay();
+
+        this.cellMatrixToList().forEach(cell => {
+            cell.mineState  = 'no-mine';
+            cell.clickState = 'not-clicked';
+            cell.css.backgroundImage = cell.style.image_NotClicked;
+            cell.css.backgroundSize = 'contain';
+            cell.item.innerHTML = '';
+            if(this.listenersRemoved === true){
+                cell.setListeners();
+            }
+        });
+        this.listenersRemoved = false;
+        //this.playArea.style.display = 'table'; //TODO!
     }
 }
