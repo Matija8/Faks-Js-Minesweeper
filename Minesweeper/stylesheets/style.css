@@ -22,6 +22,7 @@ main {
 #play-area {
     margin: auto;
     display: table;
+    /*display: hidden;*/
     clear: both;
     overflow: auto;
 }
@@ -36,10 +37,6 @@ main {
 
 .cell {
     display: table-cell;
-    
-    /*dimensions; app.js overwrites this*/
-    width:  60px;
-    height: 60px;
     border: 0.5px solid gray;
 
     /* align text */
@@ -55,9 +52,8 @@ main {
 }
 
 
-.cell:hover {
+.cell:hover {/* TODO: remove on gameEnd()? */
     cursor: pointer;
-    /*box-shadow: 5px 10px #888888;*/
 }
 
 
@@ -65,19 +61,27 @@ main {
     background-color: lavenderblush;
     border-radius: 5px;
     float: left;
-    padding: 3px 10px;
     margin: 20px 50px 20px 50px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 15px;
 }
 
-
-#new-game {
-    margin-left: 100px;
+#mine-number-display, #timer {
+    display: 'none';
+    /*
+    padding: 3px 10px;
+    display: 'block';
+    */
 }
 
 
-#new-game:hover { /* TODO: remove on gameEnd()? */
+#new-game {
+    margin-left: 100px;
+    padding: 3px 10px;
+}
+
+
+#new-game:hover {
     cursor: pointer;
 }
 

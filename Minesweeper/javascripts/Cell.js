@@ -24,14 +24,12 @@ class Cell {
         
         //Adding event listeners.
         this.listenerFunctions = [];
-        this.listenerFunctions.push([ 'mousedown', (event) => { this.mouseDown(event)} ]);
-        this.listenerFunctions.push([ 'mouseup', (event) => { if(event.button === 1) this.midUp(); } ]);
-        this.listenerFunctions.push([ 'mouseenter', () => { this.mouseIn(); } ]);
-        this.listenerFunctions.push([ 'mouseout', () => { this.mouseOut(); } ]);
-        this.listenerFunctions.push([ 'contextmenu', (event) => { event.preventDefault(); } ]);
-        this.listenerFunctions.forEach(pair => {
-            this.item.addEventListener(...pair);
-        });
+        this.listenerFunctions.push([ 'mousedown',   event => { this.mouseDown(event); } ]);
+        this.listenerFunctions.push([ 'mouseup',     event => { if(event.button === 1) this.midUp(); } ]);
+        this.listenerFunctions.push([ 'mouseenter',  ()    => { this.mouseIn();  } ]);
+        this.listenerFunctions.push([ 'mouseout',    ()    => { this.mouseOut(); } ]);
+        this.listenerFunctions.push([ 'contextmenu', event => { event.preventDefault(); } ]);
+        this.listenerFunctions.forEach(pair => { this.item.addEventListener(...pair);});
     }
 
 

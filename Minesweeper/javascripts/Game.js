@@ -10,7 +10,6 @@ class Game {
         this.numOfCols          = numOfCols;
         this.numOfMines         = numOfMines;
         this.style              = style; // Style class.
-        this.notInstantiated    = false; //TODO!
         this.numOfLeftClicked   = 0;
         this.numOfRightClicked  = 0;
         this.firstClick         = true; // Mines are set only on the first left-click.
@@ -20,15 +19,20 @@ class Game {
         this.timerDisplay       = document.getElementById('timer');
         this.startTime          = null;
         this.runningTimer       = null;
-        this.timePlaying        = null;
+        this.endTime            = null;
         this.midDownFlag        = false;
         this.cellMatrix         = [];
 
-        this.initPlayArea();
+        [this.mineNumberDisplay, this.timerDisplay].forEach(domElement => {
+            domElement.style.display = "block";
+            domElement.style.padding = '3px 10px';});
+        this.timerDisplay.innerHTML = 'Time: ' + this.timeToString(0);
         this.refreshFlagNumberDisplay();
-        this.refreshTimer();
+        this.initPlayArea();
     }
 
+
+    //TODO: make a seprate DOM maker class?
     initPlayArea(){
         const tableDOM = document.createElement('div');
         tableDOM.setAttribute('id', 'play-area');
@@ -40,14 +44,12 @@ class Game {
                 const cellDOM = document.createElement('div');
                 cellDOM.classList.add('cell');
                 rowDOM.appendChild(cellDOM);
-                row.push(new Cell(i, j, cellDOM, this));
+                row.push(new Cell(i, j, cellDOM, this)); //TODO: import Cell?
             }
             this.cellMatrix.push(row);
             tableDOM.appendChild(rowDOM);
         }
         document.getElementById('play-area-container').appendChild(tableDOM);
-
-        //for each cell: setAdjacentCells();
         this.cellMatrixToList().forEach(cell => { cell.setAdjacentCells(); } );
     }
 
@@ -63,11 +65,10 @@ class Game {
     }
 
 
-    refreshFlagNumberDisplay(){
-        this.mineNumberDisplay.innerHTML = `Flags: ${this.numOfRightClicked} / ${this.numOfMines}`;
-    }
+    refreshFlagNumberDisplay(){ this.mineNumberDisplay.innerHTML = `Flags: ${this.numOfRightClicked} / ${this.numOfMines}`; }
 
 
+    //Timer functions.
     startTimer(){
         this.startTime = Date.now();
         this.runningTimer = setInterval(this.refreshTimer.bind(this), 1000);
@@ -77,37 +78,23 @@ class Game {
     stopTimer(){
         if(this.runningTimer){
             clearInterval(this.runningTimer);
-            this.refreshTimer();
+            this.endTime = Date.now() - this.startTime;
+            this.timerDisplay.innerHTML = 'Time: ' + this.timeToString(this.endTime);
         }
     }
 
 
-    refreshTimer(){
-        if(!this.startTime){
-            this.timerDisplay.innerHTML = 'Time: ' + new Date(0).toISOString().substr(11, 8);
-        }
-        else{
-            let timeElapsed = Date.now() - this.startTime;
-            this.timerDisplay.innerHTML = 'Time: ' + new Date (timeElapsed).toISOString().substr(11, 8);
-        }
-    }
+    refreshTimer(){ this.timerDisplay.innerHTML = 'Time: ' + this.timeToString(Date.now() - this.startTime); }
+
+    timeToString(time){ return (new Date(time)).toISOString().substr(11, 8); } //Garbage collector deletes the Date objects, no memory leaks here (hopefully).
 
 
     setRandomMines(firstMine){
         let mineChoices = this.cellMatrixToList();
-
-        //remove firstMine from choices.
-        mineChoices.splice(firstMine.row*this.numOfCols + firstMine.col, 1);
-
-        //Check correct initial numOfMines.
-        if(this.numOfMines > mineChoices.length){
-            window.alert('ERROR: more mines than cells! Change app.js specs.');
-            this.numOfMines = 0;
-            return;
-        }
-    
-        //Picks n mines from leftover cell choices.
-        for(let i = 0; i<this.numOfMines; i++){
+        mineChoices.splice(firstMine.row*this.numOfCols + firstMine.col, 1); //remove firstMine from choices.
+        /*if(this.numOfMines > mineChoices.length){
+            window.alert('ERROR: more mines than cells! Change specs.');}*/
+        for(let i = 0; i<this.numOfMines; i++){ //Picks n mines from leftover cell choices.
             let randInt = Math.floor(Math.random() * mineChoices.length); //random number in [0, n).
             mineChoices[randInt].mineState = 'MINE!';
             mineChoices.splice(randInt, 1); //remove selected cell from mine choices.
@@ -115,18 +102,21 @@ class Game {
     }
 
 
-    winCondition(){
-        return this.numOfLeftClicked === this.numOfCols * this.numOfRows - this.numOfMines;
-    }    
+    winCondition(){ return this.numOfLeftClicked === this.numOfCols * this.numOfRows - this.numOfMines; }    
 
 
     gameWin(){
         if(!this.winSemaphore){
             return;
         }
-        this.winSemaphore = false;            
-        window.alert('You WON! :D');
+        this.winSemaphore = false;    
         this.gameEnd();
+        setTimeout(() => {
+            window.alert('You WON! :D\n Your time is: ' + accurateTime(this.endTime)); //TODO Chromium bug: promises?
+        } ,100);
+        //Send win time to the server via ajax...
+
+        function accurateTime(time){return (new Date(time)).toISOString().substr(11, 12);}
     }
 
 
@@ -142,10 +132,10 @@ class Game {
                 cell.css.backgroundImage = this.style.image_FlaggedWrong;}
         });
         clickedMine.css.backgroundImage = this.style.image_ClickedMine;
-        setTimeout(() => {
-            window.alert('Sorry, you just lost :(');    //TODO Chrome: promises?
-        } ,100);
         this.gameEnd();
+        setTimeout(() => {
+            window.alert('Sorry, you just lost :('); //TODO Chromium bug: promises?
+        } ,100);
     }
 
 
@@ -154,6 +144,5 @@ class Game {
         this.cellMatrixToList().forEach(cell => {
             cell.removeListeners();
         });
-
     }
 }
