@@ -82,7 +82,7 @@ class Game {
 
     startTimer(){
         this.startTime = Date.now();
-        setInterval(refreshTimerWrapper, 1000);
+        setInterval(refreshTimerWrapper(this), 1000);
     }
 
 
@@ -221,19 +221,18 @@ class Cell {
         if(this.game.midDownFlag){
             return;
         }
-        let game = this.game;
         if(this.clickState === 'not-clicked'){
             this.clickState = 'left-clicked';
-            if(game.firstClick){
-                game.firstClick = false;
-                game.setRandomMines(this);
+            if(this.game.firstClick){
+                this.game.firstClick = false;
+                this.game.setRandomMines(this);
                 this.game.startTimer();
             }
             if(this.mineState === 'MINE!'){
-                game.gameLoss(this);
+                this.game.gameLoss(this);
             }
             else {
-                game.numOfLeftClicked++;
+                this.game.numOfLeftClicked++;
                 this.item.style.background = 'grey';
                 this.css.backgroundImage = gImage_LeftClick;
                 let mineCount = this.countMines();
@@ -243,8 +242,8 @@ class Cell {
                 else {
                     this.item.innerHTML = mineCount;
                 }
-                if(game.winCondition()){
-                    game.gameWin();
+                if(this.game.winCondition()){
+                    this.game.gameWin();
                 }
             }
         }
@@ -269,15 +268,15 @@ class Cell {
             this.clickState = 'right-clicked';
             //this.item.innerHTML = '🚩';
             this.css.backgroundImage = gImage_Flag;
-            game.numOfRightClicked++;
-            game.refreshFlagNumberDisplay();
+            this.game.numOfRightClicked++;
+            this.game.refreshFlagNumberDisplay();
         }
         else if(this.clickState === 'right-clicked'){
             this.clickState = 'not-clicked';
             //this.item.innerHTML = '';
             this.css.backgroundImage = gImage_NotClicked;
-            game.numOfRightClicked--;
-            game.refreshFlagNumberDisplay();
+            this.game.numOfRightClicked--;
+            this.game.refreshFlagNumberDisplay();
         }
     }
 
@@ -349,12 +348,22 @@ class Cell {
     }
 }// class Cell
 
+var game = null;
+document.getElementById('new-game').addEventListener('click', () => { newGame([game]); });
 
-const game = new Game(gNumOfRows, gNumOfCols, gNumOfMines);
+function newGame (gameWrapper) {
+    game = gameWrapper[0];//TODO: implement better design pattern.
+    if(!game){
+        game = new Game(gNumOfRows, gNumOfCols, gNumOfMines);
+    }
 
-function refreshTimerWrapper() { game.refreshTimer(); }
-document.getElementById('new-game').addEventListener('click', (event) => { newGame(game); });
-
-function newGame (game) {
-    location.reload(); //TODO
+    //TODO newGame for non-first iteration
+    
+    /*
+    game.firstClick = false;
+    this.numOfLeftClicked   = 0;
+    this.numOfRightClicked  = 0;
+    this.startTime          = null;*/
 }
+
+function refreshTimerWrapper(game) { game.refreshTimer(); }
