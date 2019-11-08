@@ -3,29 +3,20 @@
 /* jshint node: true */
 /*jshint esversion: 6 */
 
-const gNumOfRows = 2,
-    gNumOfCols  = 2,
-    gNumOfMines = 1,
-    gCellSize = '35px',
+//TODO timer;
+
+const gNumOfRows = 7,
+    gNumOfCols  = 7,
+    gNumOfMines = 12,
+    gCellSize = '45px',
     gFontSize = '22px';
 
 
-var game = null;
-document.getElementById('new-game').addEventListener('click', () => { newGame([game]); });
+var game = {notInstantiated : true};
+document.getElementById('new-game').addEventListener('click', () => { newGame(game); });
 
-function newGame (gameWrapper) {
-    game = gameWrapper[0];//TODO: implement better design pattern.
-    if(!game){
-        game = new Game(gNumOfRows, gNumOfCols, gNumOfMines, new Style());
+function newGame (game) {
+    if(game.notInstantiated){   //TODO BUG!!!
+        game = new Game(gNumOfRows, gNumOfCols, gNumOfMines, new Style(gCellSize, gFontSize));
     }
-
-    //TODO newGame for non-first iteration
-    
-    /*
-    game.firstClick = false;
-    this.numOfLeftClicked   = 0;
-    this.numOfRightClicked  = 0;
-    this.startTime          = null;*/
 }
-
-function refreshTimerWrapper(game) { game.refreshTimer(); }

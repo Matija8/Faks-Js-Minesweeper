@@ -52,10 +52,6 @@ main {
     
     /* background */
     background-color: gainsboro;
-    /*
-    background-image: url('../images/not-clicked.png');
-    background-size: contain;
-    */
 }
 
 
@@ -81,7 +77,7 @@ main {
 }
 
 
-#new-game:hover {
+#new-game:hover { /* TODO: remove on gameEnd()? */
     cursor: pointer;
 }
 

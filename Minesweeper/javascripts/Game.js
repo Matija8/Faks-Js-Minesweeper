@@ -10,14 +10,17 @@ class Game {
         this.numOfCols          = numOfCols;
         this.numOfMines         = numOfMines;
         this.style              = style; // Style class.
+        this.notInstantiated    = false; //TODO!
         this.numOfLeftClicked   = 0;
         this.numOfRightClicked  = 0;
-        this.startTime          = null;
         this.firstClick         = true; // Mines are set only on the first left-click.
         this.winSemaphore       = true; // Hack to prevent multiple wins on empty cell recursive left-click.
-        this.lossSemaphore      = true; // TODO: Promises instead?
+        this.lossSemaphore      = true; // TODO?
         this.mineNumberDisplay  = document.getElementById('mine-number-display');
         this.timerDisplay       = document.getElementById('timer');
+        this.startTime          = null;
+        this.runningTimer       = null;
+        this.timePlaying        = null;
         this.midDownFlag        = false;
         this.cellMatrix         = [];
 
@@ -67,7 +70,15 @@ class Game {
 
     startTimer(){
         this.startTime = Date.now();
-        setInterval(refreshTimerWrapper(this), 1000);
+        this.runningTimer = setInterval(this.refreshTimer.bind(this), 1000);
+    }
+
+
+    stopTimer(){
+        if(this.runningTimer){
+            clearInterval(this.runningTimer);
+            this.refreshTimer();
+        }
     }
 
 
@@ -132,15 +143,17 @@ class Game {
         });
         clickedMine.css.backgroundImage = this.style.image_ClickedMine;
         setTimeout(() => {
-            window.alert('Sorry, you just lost :(');
+            window.alert('Sorry, you just lost :(');    //TODO Chrome: promises?
         } ,100);
         this.gameEnd();
     }
 
 
     gameEnd(){
+        this.stopTimer();
         this.cellMatrixToList().forEach(cell => {
             cell.removeListeners();
         });
+
     }
 }

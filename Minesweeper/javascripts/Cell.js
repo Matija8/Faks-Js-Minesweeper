@@ -18,7 +18,7 @@ class Cell {
         //Setting cell css properties.
         this.css = this.item.style;
         this.css.width = this.css.height = this.style.cellSize;
-        this.css.fontSize = this.style.fontSize;        
+        this.css.fontSize = this.style.fontSize;
         this.css.backgroundImage = this.style.image_NotClicked;
         this.css.backgroundSize = 'contain';
         
@@ -26,9 +26,9 @@ class Cell {
         this.listenerFunctions = [];
         this.listenerFunctions.push([ 'mousedown', (event) => { this.mouseDown(event)} ]);
         this.listenerFunctions.push([ 'mouseup', (event) => { if(event.button === 1) this.midUp(); } ]);
-        this.listenerFunctions.push([ 'contextmenu', (event) => { event.preventDefault(); } ]);
         this.listenerFunctions.push([ 'mouseenter', () => { this.mouseIn(); } ]);
-        this.listenerFunctions.push([ 'mouseout', () => { this.mouseOut(); } ]);        
+        this.listenerFunctions.push([ 'mouseout', () => { this.mouseOut(); } ]);
+        this.listenerFunctions.push([ 'contextmenu', (event) => { event.preventDefault(); } ]);
         this.listenerFunctions.forEach(pair => {
             this.item.addEventListener(...pair);
         });
