@@ -23,7 +23,6 @@ class GameMaker {
         this.newGameButton = newGameButton;
 
         this.newGameButton.addEventListener('click', () => { this.newGame(); });
-        //document.addEventListener
     }
 
     newGame(){

@@ -47,7 +47,7 @@ class Cell {
     mouseDown(event){
         switch(event.button){
             case 0:
-                this.leftClick();  break;
+                this.leftClick(); break;
             case 1:
                 this.midDown();   break;
             case 2:
@@ -158,7 +158,7 @@ class Cell {
 
     midUp(){
         this.unHighlight();
-        this.game.midDownFlag = false;
+        //this.game.midDownFlag = false; //Already done in the game class.
     }
 
 

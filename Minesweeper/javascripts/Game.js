@@ -54,7 +54,7 @@ class Game {
         }
         this.parentNode.appendChild(this.playArea);
         this.cellMatrixToList().forEach(cell => { this.setAdjacentCells(cell); } );
-        document.body.addEventListener('mouseup', event => { if(event.button === 1) this.midDownFlag = false; }); //TODO: better solution?
+        document.addEventListener('mouseup', event => { if(event.button === 1) this.midDownFlag = false; });
         this.playArea.style.display = 'table';
     }
 
