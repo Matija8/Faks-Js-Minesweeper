@@ -5,12 +5,14 @@
 
 
 class Game {
-    constructor(numOfRows, numOfCols, numOfMines, style){
+    constructor(numOfRows, numOfCols, numOfMines, style, parentNode){
         this.numOfRows          = numOfRows;
         this.numOfCols          = numOfCols;
-        this.numOfMines         = numOfMines;
+        let maxMines = this.numOfRows * this.numOfCols - 1;
+        this.numOfMines = numOfMines > maxMines ? maxMines : numOfMines;
         this.style              = style; // Style class.
-        this.playArea           = document.createElement('div');
+        this.parentNode         = parentNode;
+        this.playArea           = null;
         this.mineNumberDisplay  = document.getElementById('mine-number-display');
         this.timerDisplay       = document.getElementById('timer');
         this.numOfLeftClicked   = 0;
@@ -35,6 +37,7 @@ class Game {
 
 
     initPlayArea(){
+        this.playArea = document.createElement('div');
         this.playArea.setAttribute('id', 'play-area');
         for (let i = 0; i < this.numOfRows; i++) {
             const rowDOM = document.createElement('div');
@@ -49,9 +52,27 @@ class Game {
             this.cellMatrix.push(row);
             this.playArea.appendChild(rowDOM);
         }
-        document.getElementById('play-area-container').appendChild(this.playArea);
-        this.cellMatrixToList().forEach(cell => { cell.setAdjacentCells(); } );
+        this.parentNode.appendChild(this.playArea);
+        this.cellMatrixToList().forEach(cell => { this.setAdjacentCells(cell); } );
         this.playArea.style.display = 'table';
+
+    }
+
+
+    setAdjacentCells(cell){
+        let [row, col]  = [cell.row, cell.col],
+            leftCheck   = (col === 0)                ?   col : col-1,
+            rightCheck  = (col === this.numOfCols-1) ?   col : col+1,
+            topCheck    = (row === 0)                ?   row : row-1,
+            bottomCheck = (row === this.numOfRows-1) ?   row : row+1;            
+        for(let i = topCheck; i<=bottomCheck; i++){
+            for(let j = leftCheck; j<=rightCheck; j++){
+                if(i === row && j === col){
+                    continue;
+                }
+                cell.adjacent.push(this.cellMatrix[i][j]);
+            }
+        }
     }
 
 
@@ -93,8 +114,6 @@ class Game {
     setRandomMines(firstMine){
         let mineChoices = this.cellMatrixToList();
         mineChoices.splice(firstMine.row*this.numOfCols + firstMine.col, 1); //remove firstMine from choices.
-        /*if(this.numOfMines > mineChoices.length){
-            window.alert('ERROR: more mines than cells! Change specs.');}*/
         for(let i = 0; i<this.numOfMines; i++){ //Picks n mines from leftover cell choices.
             let randInt = Math.floor(Math.random() * mineChoices.length); //random number in [0, n).
             mineChoices[randInt].mineState = 'MINE!';

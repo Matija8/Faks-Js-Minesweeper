@@ -44,23 +44,6 @@ class Cell {
     }
 
 
-    setAdjacentCells(){
-        let [row, col]  = [this.row, this.col],
-            leftCheck   = (col === 0)                ?   col : col-1,
-            rightCheck  = (col === this.game.numOfCols-1) ?   col : col+1,
-            topCheck    = (row === 0)                ?   row : row-1,
-            bottomCheck = (row === this.game.numOfRows-1) ?   row : row+1;            
-        for(let i = topCheck; i<=bottomCheck; i++){
-            for(let j = leftCheck; j<=rightCheck; j++){
-                if(i === row && j === col){
-                    continue;
-                }
-                this.adjacent.push(this.game.cellMatrix[i][j]);
-            }
-        }
-    }
-
-
     mouseDown(event){
         switch(event.button){
             case 0:
@@ -74,34 +57,33 @@ class Cell {
 
 
     leftDown(){
-        if(this.game.midDownFlag){
+        if(this.game.midDownFlag || this.clickState !== 'not-clicked'){
+            // You can only left click while:
+            // 1) not highlighting
+            // 2) if the cell is not alredy clicked
             return;
         }
-        if(this.clickState === 'not-clicked'){
-            this.clickState = 'left-clicked';
-            if(this.game.firstClick){
-                this.game.firstClick = false;
-                this.game.setRandomMines(this);
-                this.game.startTimer();
-            }
-            if(this.mineState === 'MINE!'){
-                this.game.gameLoss(this);
-            }
-            else {
-                this.game.numOfLeftClicked++;
-                this.item.style.background = 'grey';
-                this.css.backgroundImage = this.style.image_LeftClick;
-                let mineCount = this.countMines();
-                if(mineCount === 0){
-                    this.adjacent.forEach(cell => cell.leftDown() );
-                }
-                else {
-                    this.item.innerHTML = mineCount;
-                }
-                if(this.game.winCondition()){
-                    this.game.gameWin();
-                }
-            }
+        if(this.mineState === 'MINE!'){     // Mine hit.
+            this.game.gameLoss(this);
+            return;
+        }
+        if(this.game.firstClick){           // First click in the game. Still a normal left-click.
+            this.game.firstClick = false;
+            this.game.setRandomMines(this);
+            this.game.startTimer();
+        }
+        this.clickState = 'left-clicked';   // Register the left-click.
+        this.game.numOfLeftClicked++;
+        this.css.backgroundImage = this.style.image_LeftClick;
+        let mineCount = this.countMines();
+        if(mineCount === 0){
+            this.adjacent.forEach(cell => cell.leftDown() ); // Recursive left-click on a 'free' cell.
+        }
+        else {
+            this.item.innerHTML = mineCount;
+        }
+        if(this.game.winCondition()){
+            this.game.gameWin();
         }
     }
 
@@ -122,14 +104,12 @@ class Cell {
         }
         if(this.clickState === 'not-clicked'){
             this.clickState = 'right-clicked';
-            //this.item.innerHTML = '🚩';
             this.css.backgroundImage = this.style.image_Flag;
             this.game.numOfRightClicked++;
             this.game.refreshFlagNumberDisplay();
         }
         else if(this.clickState === 'right-clicked'){
             this.clickState = 'not-clicked';
-            //this.item.innerHTML = '';
             this.css.backgroundImage = this.style.image_NotClicked;
             this.game.numOfRightClicked--;
             this.game.refreshFlagNumberDisplay();
@@ -147,10 +127,11 @@ class Cell {
             });
             if(mineCount === 0){
                 this.adjacent.forEach(cell => cell.leftDown() );
+                return; // Don't highlight if left-clicking. Prevents wrong flag loss problems.
             }
         }
         this.game.midDownFlag = true;
-        this.mouseIn();
+        this.highlight();
     }
 
 
