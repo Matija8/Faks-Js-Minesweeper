@@ -51,7 +51,7 @@ main {
 }
 
 
-.cell:hover {/* FTODO: remove on gameEnd()? */
+.cell:hover {/* TODO: remove on gameEnd()? */
     cursor: pointer;
 }
 

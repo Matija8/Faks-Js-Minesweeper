@@ -17,7 +17,7 @@ class Cell {
 
         //Setting cell css properties.
         this.css = this.item.style;
-        this.css.width = this.css.height = this.style.cellSize;
+        this.css.width = this.css.minWidth = this.css.height = this.css.minHeight = this.style.cellSize;
         this.css.fontSize = this.style.fontSize;
         this.css.backgroundImage = this.style.image_NotClicked;
         this.css.backgroundSize = 'contain';
