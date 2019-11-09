@@ -29,9 +29,9 @@ class Cell {
     setListeners(){
         this.listenerFunctions = [];
         this.listenerFunctions.push([ 'mousedown',   event => { this.mouseDown(event); } ]);
-        this.listenerFunctions.push([ 'mouseup',     event => { if(event.button === 1) this.midUp(); } ]);
-        this.listenerFunctions.push([ 'mouseenter',  ()    => { this.mouseIn();  } ]);
-        this.listenerFunctions.push([ 'mouseout',    ()    => { this.mouseOut(); } ]);
+        this.listenerFunctions.push([ 'mouseup',     event => { this.mouseUp(event);   } ]);
+        this.listenerFunctions.push([ 'mouseenter',  ()    => { this.mouseIn();        } ]);
+        this.listenerFunctions.push([ 'mouseout',    ()    => { this.mouseOut();       } ]);
         this.listenerFunctions.forEach(pair => { this.item.addEventListener(...pair);});
     }
 
@@ -46,7 +46,7 @@ class Cell {
     mouseDown(event){
         switch(event.button){
             case 0:
-                this.leftClick(); break;
+                this.leftDown();  break;
             case 1:
                 this.midDown();   break;
             case 2:
@@ -55,9 +55,22 @@ class Cell {
     }
 
 
+    mouseUp(event){
+        switch(event.button){
+            case 0:
+                this.leftUp(); break;
+            case 1:
+                this.midUp();  break;
+        }
+    }
+
+
     mouseIn(){
         if(this.game.midDownFlag){
             this.highlight();
+        }
+        if(this.game.leftDownFlag){
+            this.leftDown();
         }
     }
 
@@ -66,17 +79,23 @@ class Cell {
         if(this.game.midDownFlag){
             this.unHighlight();
         }
-    }
-
-
-    leftOut(){
-        if(this.clickState === 'not-clicked'){
-            this.css.backgroundImage = this.style.image_NotClicked;
+        if(this.game.leftDownFlag){
+            if(this.clickState === 'not-clicked'){
+                this.css.backgroundImage = this.style.image_NotClicked;
+            }
         }
     }
 
 
-    leftClick(){
+    leftDown(){
+        this.game.leftDownFlag = true;
+        if(this.clickState === 'not-clicked'){
+            this.css.backgroundImage = this.style.image_LeftClick;
+        }
+    }
+
+
+    leftUp(){
         if(this.game.midDownFlag || this.clickState !== 'not-clicked'){
             // You can only left click while:
             // 1) not highlighting
@@ -97,7 +116,7 @@ class Cell {
         this.css.backgroundImage = this.style.image_LeftClick;
         let mineCount = this.countMines();
         if(mineCount === 0){
-            this.adjacent.forEach(cell => cell.leftClick() ); // Recursive left-click on a 'free' cell.
+            this.adjacent.forEach(cell => cell.leftUp() ); // Recursive left-click on a 'free' cell.
         }
         else {
             this.item.innerHTML = mineCount;
@@ -138,6 +157,14 @@ class Cell {
 
 
     midDown(){
+        this.game.midDownFlag = true;
+        this.highlight();
+    }
+
+
+    midUp(){
+        this.unHighlight();
+        this.game.midDownFlag = false;
         if(this.clickState === 'left-clicked'){
             let mineCount = this.countMines();
             this.adjacent.forEach( adj => {
@@ -146,17 +173,9 @@ class Cell {
                 }
             });
             if(mineCount === 0){
-                this.adjacent.forEach(cell => cell.leftClick() );
-                return; // Don't highlight if auto left-clicking. Prevents wrong flag loss problems.
+                this.adjacent.forEach(cell => cell.leftUp() );
             }
         }
-        this.game.midDownFlag = true;
-        this.highlight();
-    }
-
-
-    midUp(){
-        this.unHighlight();
     }
 
 

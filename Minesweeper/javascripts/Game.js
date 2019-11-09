@@ -21,6 +21,7 @@ class Game {
         this.lossSemaphore      = true; // TODO: different solution?
         this.firstClick         = true; // Mines are set only on the first left-click.
         this.listenersRemoved   = false;
+        this.leftDownFlag        = false;
         this.midDownFlag        = false;
         this.startTime          = null;
         this.runningTimer       = null;
@@ -77,9 +78,10 @@ class Game {
 
 
     setMouseFlagListeners(){
-        //mid-down flag.
-        document.addEventListener('mousedown', event => { if(event.button === 1) this.midDownFlag = true; });
-        document.addEventListener('mouseup',   event => { if(event.button === 1) this.midDownFlag = false; });
+        document.addEventListener('mouseup',   event => {
+                if(event.button === 1) {this.midDownFlag = false;}
+                else if(event.button === 0) {this.leftDownFlag = false;}
+            });
     }
 
 
