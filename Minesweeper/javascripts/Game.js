@@ -19,9 +19,11 @@ class Game {
         this.numOfRightClicked  = 0;
         this.winSemaphore       = true; // Hack to prevent multiple wins on empty cell recursive left-click.
         this.lossSemaphore      = true; // TODO?
-        this.listenersRemoved   = false;
         this.firstClick         = true; // Mines are set only on the first left-click.
+        this.listenersRemoved   = false;
+        this.leftDownFlag       = false;
         this.midDownFlag        = false;
+        this.tmpDownFlags       = [false, false]; // Hack to prevent click inside and relase outside of cell bug.
         this.startTime          = null;
         this.runningTimer       = null;
         this.endTime            = null;
@@ -54,8 +56,14 @@ class Game {
         }
         this.parentNode.appendChild(this.playArea);
         this.cellMatrixToList().forEach(cell => { this.setAdjacentCells(cell); } );
+        this.playArea.addEventListener('mouseleave', () => {
+            this.tmpDownFlags = [this.leftDownFlag, this.midDownFlag]; //TODO! FIX mouse reenter
+            [this.leftDownFlag, this.midDownFlag] = [false, false];
+        });
+        /*this.playArea.addEventListener('mouseenter', () => {
+            [this.leftDownFlag, this.midDownFlag] = this.tmpDownFlags;
+        });*/
         this.playArea.style.display = 'table';
-
     }
 
 

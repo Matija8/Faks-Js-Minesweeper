@@ -29,7 +29,7 @@ class Cell {
     setListeners(){
         this.listenerFunctions = [];
         this.listenerFunctions.push([ 'mousedown',   event => { this.mouseDown(event); } ]);
-        this.listenerFunctions.push([ 'mouseup',     event => { if(event.button === 1) this.midUp(); } ]);
+        this.listenerFunctions.push([ 'mouseup',     event => { this.mouseUp(event);   } ]);
         this.listenerFunctions.push([ 'mouseenter',  ()    => { this.mouseIn();  } ]);
         this.listenerFunctions.push([ 'mouseout',    ()    => { this.mouseOut(); } ]);
         //this.listenerFunctions.push([ 'contextmenu', event => { event.preventDefault(); } ]);
@@ -56,8 +56,57 @@ class Cell {
     }
 
 
+    mouseUp(event){
+        switch(event.button){
+            case 0:
+                this.leftClick();  break;
+            case 1:
+                this.midUp();   break;
+        }
+    }
+
+
+    mouseIn(){
+        if(this.game.midDownFlag){
+            this.highlight();
+        }
+        if(this.game.leftDownFlag){ //TODO!
+            this.leftDown();
+        }
+    }
+
+
+    mouseOut(){
+        if(this.game.midDownFlag){
+            this.unHighlight();
+        }
+        if(this.game.leftDownFlag){ //TODO!
+            this.leftOut();
+        }
+    }
+
+
     leftDown(){
-        if(this.game.midDownFlag || this.clickState !== 'not-clicked'){
+        if(this.game.midDownFlag){
+            return;
+        }
+        this.game.leftDownFlag = true;
+        if(this.clickState === 'not-clicked'){
+            this.css.backgroundImage = this.style.image_LeftClick;
+        }
+    }
+
+
+    leftOut(){
+        if(this.clickState === 'not-clicked'){
+            this.css.backgroundImage = this.style.image_NotClicked;
+        }
+    }
+
+
+    leftClick(){
+        this.game.leftDownFlag = false;
+        if(this.game.midDownFlag || this.clickState !== 'not-clicked'){ //TODO?
             // You can only left click while:
             // 1) not highlighting
             // 2) if the cell is not alredy clicked
@@ -77,7 +126,7 @@ class Cell {
         this.css.backgroundImage = this.style.image_LeftClick;
         let mineCount = this.countMines();
         if(mineCount === 0){
-            this.adjacent.forEach(cell => cell.leftDown() ); // Recursive left-click on a 'free' cell.
+            this.adjacent.forEach(cell => cell.leftClick() ); // Recursive left-click on a 'free' cell.
         }
         else {
             this.item.innerHTML = mineCount;
@@ -118,6 +167,9 @@ class Cell {
 
 
     midDown(){
+        if(this.game.leftDownFlag){ //you can't midDown if your leftDowning (if that makes sense...).
+        return;
+        }
         if(this.clickState === 'left-clicked'){
             let mineCount = this.countMines();
             this.adjacent.forEach( adj => {
@@ -126,26 +178,12 @@ class Cell {
                 }
             });
             if(mineCount === 0){
-                this.adjacent.forEach(cell => cell.leftDown() );
+                this.adjacent.forEach(cell => cell.leftClick() );
                 return; // Don't highlight if left-clicking. Prevents wrong flag loss problems.
             }
         }
         this.game.midDownFlag = true;
         this.highlight();
-    }
-
-
-    mouseIn(){
-        if(this.game.midDownFlag){
-            this.highlight();
-        }
-    }
-
-
-    mouseOut(){
-        if(this.game.midDownFlag){
-            this.unHighlight();
-        }
     }
 
 
