@@ -18,7 +18,7 @@ class Game {
         this.numOfLeftClicked   = 0;
         this.numOfRightClicked  = 0;
         this.winSemaphore       = true; // Hack to prevent multiple wins on empty cell recursive left-click.
-        this.lossSemaphore      = true; // TODO?
+        this.lossSemaphore      = true; // TODO: different solution?
         this.firstClick         = true; // Mines are set only on the first left-click.
         this.listenersRemoved   = false;
         this.midDownFlag        = false;
@@ -47,15 +47,15 @@ class Game {
                 const cellDOM = document.createElement('div');
                 cellDOM.classList.add('cell');
                 rowDOM.appendChild(cellDOM);
-                row.push(new Cell(i, j, cellDOM, this)); //TODO: import Cell?
+                row.push(new Cell(i, j, cellDOM, this));
             }
             this.cellMatrix.push(row);
             this.playArea.appendChild(rowDOM);
         }
         this.parentNode.appendChild(this.playArea);
         this.cellMatrixToList().forEach(cell => { this.setAdjacentCells(cell); } );
-        document.addEventListener('mouseup', event => { if(event.button === 1) this.midDownFlag = false; });
-        this.playArea.style.display = 'table';
+
+        this.setMouseFlagListeners();
     }
 
 
@@ -73,6 +73,13 @@ class Game {
                 cell.adjacent.push(this.cellMatrix[i][j]);
             }
         }
+    }
+
+
+    setMouseFlagListeners(){
+        //mid-down flag.
+        document.addEventListener('mousedown', event => { if(event.button === 1) this.midDownFlag = true; });
+        document.addEventListener('mouseup',   event => { if(event.button === 1) this.midDownFlag = false; });
     }
 
 
@@ -132,7 +139,7 @@ class Game {
         this.winSemaphore = false;    
         this.gameEnd();
         setTimeout(() => {
-            window.alert('You WON! :D\n Your time is: ' + accurateTime(this.endTime)); //TODO Chromium bug: promises?
+            window.alert('You WON! :D\n Your time is: ' + accurateTime(this.endTime)); //TODO Chromium bug fix: promises instead?
         } ,100);
         //Send win time to the server (Node.js) via ajax...
 
@@ -154,7 +161,7 @@ class Game {
         clickedMine.css.backgroundImage = this.style.image_ClickedMine;
         this.gameEnd();
         setTimeout(() => {
-            window.alert('Sorry, you just lost :('); //TODO Chromium bug: promises?
+            window.alert('Sorry, you just lost :('); //TODO Chromium bug fix: promises instead?
         } ,100);
     }
 
@@ -169,7 +176,6 @@ class Game {
 
 
     reInit(){
-        //this.playArea.style.display = 'hidden'; //TODO!
         this.stopTimer();
         this.timerDisplay.innerHTML = 'Time: ' + this.timeToString(0);
 
@@ -192,6 +198,5 @@ class Game {
             }
         });
         this.listenersRemoved = false;
-        //this.playArea.style.display = 'table'; //TODO!
     }
 }

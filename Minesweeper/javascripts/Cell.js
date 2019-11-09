@@ -32,7 +32,6 @@ class Cell {
         this.listenerFunctions.push([ 'mouseup',     event => { if(event.button === 1) this.midUp(); } ]);
         this.listenerFunctions.push([ 'mouseenter',  ()    => { this.mouseIn();  } ]);
         this.listenerFunctions.push([ 'mouseout',    ()    => { this.mouseOut(); } ]);
-        //this.listenerFunctions.push([ 'contextmenu', event => { event.preventDefault(); } ]);
         this.listenerFunctions.forEach(pair => { this.item.addEventListener(...pair);});
     }
 
@@ -78,7 +77,7 @@ class Cell {
 
 
     leftClick(){
-        if(this.game.midDownFlag || this.clickState !== 'not-clicked'){ //TODO?
+        if(this.game.midDownFlag || this.clickState !== 'not-clicked'){
             // You can only left click while:
             // 1) not highlighting
             // 2) if the cell is not alredy clicked
@@ -158,7 +157,6 @@ class Cell {
 
     midUp(){
         this.unHighlight();
-        //this.game.midDownFlag = false; //Already done in the game class.
     }
 
 

@@ -1,5 +1,6 @@
 body {
     background-color: lightgoldenrodyellow;
+    margin: auto;
 }
 
 
@@ -9,7 +10,6 @@ header {
     background-color: #003e9b;
     width: auto;
     margin: auto;
-    border-radius: 10px;
 }
 
 
@@ -21,8 +21,7 @@ main {
 
 #play-area {
     margin: auto;
-    /*display: table;*/
-    display: hidden;
+    display: table;
     clear: both;
     overflow: auto;
 }
@@ -52,7 +51,7 @@ main {
 }
 
 
-.cell:hover {/* TODO: remove on gameEnd()? */
+.cell:hover {/* FTODO: remove on gameEnd()? */
     cursor: pointer;
 }
 
