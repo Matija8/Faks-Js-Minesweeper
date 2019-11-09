@@ -21,9 +21,7 @@ class Game {
         this.lossSemaphore      = true; // TODO?
         this.firstClick         = true; // Mines are set only on the first left-click.
         this.listenersRemoved   = false;
-        this.leftDownFlag       = false;
         this.midDownFlag        = false;
-        this.tmpDownFlags       = [false, false]; // Hack to prevent click inside and relase outside of cell bug.
         this.startTime          = null;
         this.runningTimer       = null;
         this.endTime            = null;
@@ -56,13 +54,7 @@ class Game {
         }
         this.parentNode.appendChild(this.playArea);
         this.cellMatrixToList().forEach(cell => { this.setAdjacentCells(cell); } );
-        this.playArea.addEventListener('mouseleave', () => {
-            this.tmpDownFlags = [this.leftDownFlag, this.midDownFlag]; //TODO! FIX mouse reenter
-            [this.leftDownFlag, this.midDownFlag] = [false, false];
-        });
-        /*this.playArea.addEventListener('mouseenter', () => {
-            [this.leftDownFlag, this.midDownFlag] = this.tmpDownFlags;
-        });*/
+        document.body.addEventListener('mouseup', event => { if(event.button === 1) this.midDownFlag = false; }); //TODO: better solution?
         this.playArea.style.display = 'table';
     }
 
