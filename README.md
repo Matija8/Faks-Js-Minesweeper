@@ -6,9 +6,10 @@
 
 ### Controls:
 
-* #### Left-click   - open a cell. If the cell containes a mine you lose. First cell of a game is never a mine.
-* #### Right-click  - place/remove mine flag. Use to prevent yourself from left-clicking a closed cell.
-* #### Middle-click - highlight adjacent cells and open them if enough mine flags are set.
+* #### Left-click   - Open a cell. If the cell containes a mine you lose. First cell of a game is never a mine.
+* #### Right-click  - Place/remove mine flag. Use to prevent yourself from left-clicking a closed cell.
+* #### Middle-click - Highlight adjacent cells and open them if enough mine flags are set.
+* #### F2 - Start a new game.
 
 ### Notes:
 

@@ -23,6 +23,7 @@ class GameMaker {
         this.newGameButton = newGameButton;
 
         this.newGameButton.addEventListener('click', () => { this.newGame(); });
+        document.addEventListener('keydown', e => { if (e.which == 113) this.newGame() } );
     }
 
     newGame(){
