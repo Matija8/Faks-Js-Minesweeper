@@ -1,21 +1,31 @@
 body {
-    background-color: lightgoldenrodyellow;
+    background-color: lavenderblush;
     margin: auto;
 }
 
 
 header {
-    min-width: 700px;
-    min-height: 60px;
+    min-width: 900px;
+    min-height: 65px;
     background-color: #003e9b;
     width: auto;
     margin: auto;
+    margin-bottom: 30px;
+    text-align: center;
 }
 
 
 main {
     width: auto;
     clear: both;
+}
+
+
+#top-menu {
+    display: inline-block;
+    margin: auto;
+    clear: both;
+    overflow: auto;
 }
 
 
@@ -45,9 +55,6 @@ main {
     /* font */
     font-family: Tahoma, Geneva, sans-serif;
     font-size: 20px;
-    
-    /* background */
-    background-color: gainsboro;
 }
 
 
@@ -56,13 +63,15 @@ main {
 }
 
 
-#new-game, #mine-number-display, #timer {
+#new-game, #mine-number-display, #timer, #mode {
     background-color: lavenderblush;
-    border-radius: 5px;
+    height: 20px;
+    border-radius: 8px;
     float: left;
     margin: 20px 50px 20px 50px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 15px;
+    padding: 3px 10px;
 }
 
 #mine-number-display, #timer {
@@ -74,14 +83,37 @@ main {
 }
 
 
-#new-game {
-    margin-left: 100px;
-    padding: 3px 10px;
+input, #new-game:hover, #mode:hover {
+    cursor: pointer;
+}
+
+#dropdown:hover {
+    cursor: default;
 }
 
 
-#new-game:hover {
-    cursor: pointer;
+#mode {
+    /* position: relative; */
+    text-align: center;
+}
+
+
+#dropdown {
+    /* display: none; */
+    clear: both;
+    position: absolute;
+    background-color: lavenderblush;
+    z-index: 1;
+}
+
+
+#dropdown div {
+    margin: 5px;
+}
+
+
+input {
+    float: left;
 }
 
 
