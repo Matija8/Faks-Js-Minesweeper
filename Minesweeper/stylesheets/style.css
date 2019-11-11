@@ -68,9 +68,9 @@ main {
     height: 20px;
     border-radius: 8px;
     float: left;
-    margin: 20px 50px 20px 50px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 15px;
+    margin: 20px 50px 20px 50px;
     padding: 3px 10px;
 }
 
@@ -98,10 +98,12 @@ input, #new-game:hover, #mode:hover {
 }
 
 
-#dropdown {
-    /* display: none; */
+#dropdown {         /* TODO: Make it pretty. */
+    display: none;
     clear: both;
+    overflow: auto;  /* prevent margin collapse? */
     position: absolute;
+    border-radius: 8px;
     background-color: lavenderblush;
     z-index: 1;
 }
