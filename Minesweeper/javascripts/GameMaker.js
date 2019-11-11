@@ -38,6 +38,7 @@ class GameMaker {
     newGame(){
         if(this.checked !== this.prevChecked){
             this.prevChecked = this.checked;
+            this.game.playArea.remove();
             this.gameMake(); //make a new game if the dimensions have changed.
         }
         else{
@@ -47,7 +48,7 @@ class GameMaker {
 
     gameMake(){
         this.setDimensions(this.checked);
-        this.game = new Game(this.NumOfRows, this.NumOfCols, this.NumOfMines, new Style(this.CellSize, this.FontSize), gameParentNode);
+        this.game = new Game(this.NumOfRows, this.NumOfCols, this.NumOfMines, new Style(this.CellSize, this.FontSize), gameParentNode); //TODO: delete the game?
     }
 
     setDimensions(mode){
