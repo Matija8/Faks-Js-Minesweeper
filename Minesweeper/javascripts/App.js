@@ -4,12 +4,12 @@
 /*jshint esversion: 6 */
 
 
-const   dropdownButton = document.getElementById('mode'),
+const   dropdownButton = document.getElementById('showDropdown'),
         dropdown = document.getElementById('dropdown');
         //modeRadio = document.querySelectorAll('input');
 
-        dropdownButton.addEventListener('mouseenter', () => showMenu(true));
-        dropdownButton.addEventListener('mouseleave', () => showMenu(false));
+        dropdownButton.addEventListener('mouseenter', () => showMenu(dropdown, true));
+        dropdownButton.addEventListener('mouseleave', () => showMenu(dropdown, false));
 
 
 const   newGameButton = document.getElementById('new-game'),
@@ -17,7 +17,7 @@ const   newGameButton = document.getElementById('new-game'),
         gameController = new GameMaker(newGameButton, gameParentNode);
 
 
-function showMenu(show) {
+function showMenu(dropdown, show) {
     if(show){
         dropdown.style.display = 'block';
     }

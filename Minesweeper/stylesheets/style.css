@@ -63,7 +63,7 @@ main {
 }
 
 
-#new-game, #mine-number-display, #timer, #mode {
+#new-game, #mine-number-display, #timer, #showDropdown {
     background-color: lavenderblush;
     height: 20px;
     border-radius: 8px;
@@ -83,7 +83,7 @@ main {
 }
 
 
-input, #new-game:hover, #mode:hover {
+input, #new-game:hover, #showDropdown:hover {
     cursor: pointer;
 }
 
@@ -92,7 +92,7 @@ input, #new-game:hover, #mode:hover {
 }
 
 
-#mode {
+#showDropdown {
     /* position: relative; */
     text-align: center;
 }
@@ -101,16 +101,16 @@ input, #new-game:hover, #mode:hover {
 #dropdown {         /* TODO: Make it pretty. */
     display: none;
     clear: both;
-    overflow: auto;  /* prevent margin collapse? */
     position: absolute;
     border-radius: 8px;
+    margin-top: 6px;
     background-color: lavenderblush;
     z-index: 1;
 }
 
-
-#dropdown div {
-    margin: 5px;
+#dropdown div{
+    margin: 7px 7px 7px 7px;
+    clear: none;
 }
 
 
