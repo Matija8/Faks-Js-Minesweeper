@@ -103,7 +103,7 @@ input, #new-game:hover, #showDropdown:hover {
     clear: both;
     position: absolute;
     border-radius: 8px;
-    margin-top: 6px;
+    margin-top: 5px;
     background-color: lavenderblush;
     z-index: 1;
 }
