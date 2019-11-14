@@ -5,11 +5,12 @@
 
 
 class Game {
-    constructor(numOfRows, numOfCols, numOfMines, style, parentNode){
+    constructor(numOfRows, numOfCols, numOfMines, parentNode, gameType, style){
         this.numOfRows          = numOfRows;
         this.numOfCols          = numOfCols;
         let maxMines = this.numOfRows * this.numOfCols - 1;
         this.numOfMines = numOfMines > maxMines ? maxMines : numOfMines;
+        this.gameType           = gameType; // String denoting the game type.
         this.style              = style; // Style class.
         this.parentNode         = parentNode;
         this.playArea           = null;
@@ -141,9 +142,11 @@ class Game {
         this.winSemaphore = false;    
         this.gameEnd();
         setTimeout(() => {
-            window.alert('You WON! :D\n Your time is: ' + accurateTime(this.endTime)); //TODO Chromium bug fix: promises instead?
+            window.alert('You WON! :D\n'
+            + 'Game difficulty: ' + this.gameType + '\n'
+            + 'Your time is: ' + accurateTime(this.endTime) + ' ms'); //TODO Chromium bug fix: promises instead?
         } ,100);
-        //Send win time to the server (Node.js) via ajax...
+        //Send win time and game type to the server (Node.js) via ajax...
 
         function accurateTime(time){return (new Date(time)).toISOString().substr(11, 12);}
     }
@@ -180,7 +183,6 @@ class Game {
     reInit(){
         this.stopTimer();
         this.timerDisplay.innerHTML = 'Time: ' + this.timeToString(0);
-
         this.numOfLeftClicked   = 0;
         this.numOfRightClicked  = 0;
         this.firstClick         = true;
