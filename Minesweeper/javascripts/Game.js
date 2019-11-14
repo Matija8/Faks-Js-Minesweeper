@@ -22,7 +22,7 @@ class Game {
         this.lossSemaphore      = true; // TODO: different solution?
         this.firstClick         = true; // Mines are set only on the first left-click.
         this.listenersRemoved   = false;
-        this.leftDownFlag        = false;
+        this.leftDownFlag       = false;
         this.midDownFlag        = false;
         this.startTime          = null;
         this.runningTimer       = null;

@@ -15,12 +15,12 @@ class GameMaker {
         this.game       = null;
         this.gameParentNode = gameParentNode;
         this.radios = document.querySelectorAll('.drop-radio');
-        const defaultRadio = document.getElementById('default'); // Check the default radio button.
+        const defaultRadio = document.getElementById('default'); // Check off the default radio button.
             defaultRadio.checked = true;
         //this.checkedRadio = this.prevCheckedRadio = '0'; // Use this value for testing only.
         this.checkedRadio = this.prevCheckedRadio = defaultRadio.value;
         this.newGameButton = newGameButton;
-        this.newGameButton.addEventListener('click', () => { this.newGame(); });
+        this.newGameButton.addEventListener('click', () => { this.newGame(); });             // New game button.
         document.addEventListener('keydown', e => { if (e.which == 113) this.newGame(); } ); // F2 starts new game.
         // TODO: better solution for finding the checked radio button:
         this.radios.forEach(radio => {
@@ -35,6 +35,7 @@ class GameMaker {
         if(this.checkedRadio !== this.prevCheckedRadio){ // Make a new game if the dimensions have changed.
             this.prevCheckedRadio = this.checkedRadio;
             this.game.playArea.remove(); // Remove old game DOM elements.
+            this.game.stopTimer();       // Stop the timer.
             this.gameMake();
         }
         else{                                            // Otherwise just reload the game.
