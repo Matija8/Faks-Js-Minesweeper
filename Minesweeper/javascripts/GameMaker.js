@@ -41,12 +41,10 @@ class GameMaker {
 
     gameMake(){
         this.setDimensions(this.checkedRadio);
-        console.log(this);
-        this.game = new Game(this.NumOfRows, this.NumOfCols, this.NumOfMines, new Style(this.CellSize, this.FontSize), this.gameParentNode); //TODO: delete the game?
+        this.game = new Game(this.NumOfRows, this.NumOfCols, this.NumOfMines, new Style(this.CellSize, this.FontSize), this.gameParentNode);
     }
 
     setDimensions(mode){
-        console.log(this);
         switch(mode){
             case '1':
                 this.NumOfRows  = 8;
