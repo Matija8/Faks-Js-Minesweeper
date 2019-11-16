@@ -46,11 +46,16 @@ class Cell {
     mouseDown(event){
         switch(event.button){
             case 0:
-                this.leftDown();  break;
+                if(!this.game.midDownFlag)
+                    this.leftDown();
+                break;
             case 1:
-                this.midDown();   break;
+                if(!this.game.leftDownFlag)
+                    this.midDown();
+                break;
             case 2:
-                this.rightDown(); break;
+                this.rightDown();
+                break;
         }
     }
 
@@ -58,9 +63,13 @@ class Cell {
     mouseUp(event){
         switch(event.button){
             case 0:
-                this.leftUp(); break;
+                if(this.game.leftDownFlag)
+                    this.leftUp();
+                break;
             case 1:
-                this.midUp();  break;
+                if(this.game.midDownFlag)
+                    this.midUp();
+                break;
         }
     }
 
@@ -96,10 +105,7 @@ class Cell {
 
 
     leftUp(){
-        if(this.game.midDownFlag || this.clickState !== 'not-clicked'){
-            // You can only left click while:
-            // 1) not highlighting
-            // 2) if the cell is not alredy clicked
+        if(this.clickState !== 'not-clicked'){
             return;
         }
         if(this.mineState === 'MINE!'){     // Mine hit.
@@ -111,19 +117,22 @@ class Cell {
             this.game.setRandomMines(this);
             this.game.startTimer();
         }
-        this.clickState = 'left-clicked';   // Register the left-click.
-        this.game.numOfLeftClicked++;
-        this.css.backgroundImage = this.style.image_LeftClick;
-        let mineCount = this.countMines();
-        if(mineCount === 0){
-            this.adjacent.forEach(cell => cell.leftUp() ); // Recursive left-click on a 'free' cell.
-        }
-        else {
-            this.item.innerHTML = mineCount;
-        }
-        if(this.game.winCondition()){
-            this.game.gameWin();
-        }
+        let promiseRefreshScreen = new Promise( win => {
+            this.clickState = 'left-clicked';   // Register the left-click.
+            this.game.numOfLeftClicked++;
+            this.css.backgroundImage = this.style.image_LeftClick;
+            let mineCount = this.countMines();
+            if(mineCount === 0){
+                this.adjacent.forEach(cell => cell.leftUp() ); // Recursive left-click on a 'free' cell.
+            }
+            else {
+                this.item.innerHTML = mineCount;
+            }
+            if(this.game.winCondition()){
+                win();
+            }
+        });
+        promiseRefreshScreen.then( () => this.game.gameWin() );
     }
 
 
@@ -138,7 +147,7 @@ class Cell {
 
 
     rightDown(){
-        if(this.game.midDownFlag){
+        if(this.game.midDownFlag || this.game.leftDownFlag){
             return;
         }
         if(this.clickState === 'not-clicked'){

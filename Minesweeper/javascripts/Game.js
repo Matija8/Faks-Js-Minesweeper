@@ -139,16 +139,17 @@ class Game {
         if(!this.winSemaphore){
             return;
         }
-        this.winSemaphore = false;    
-        this.gameEnd();
-        setTimeout(() => {
-            window.alert('You WON! :D\n'
-            + 'Game difficulty: ' + this.gameType + '\n'
-            + 'Your time is: ' + accurateTime(this.endTime) + ' ms'); //TODO Chromium bug fix: promises instead?
-        } ,100);
+        this.winSemaphore = false;
+        let refreshBeforeAlertPromise = new Promise( (resolve, reject) => {
+            this.gameEnd();
+            resolve();
+        });
+        refreshBeforeAlertPromise.then( () => {
+            window.alert('You WON! :D\n' +
+            'Game difficulty: ' + this.gameType + '\n' +
+            'Your time is: ' + (new Date(this.endTime)).toISOString().substr(11, 12) + ' ms');
+        });
         //Send win time and game type to the server (Node.js) via ajax...
-
-        function accurateTime(time){return (new Date(time)).toISOString().substr(11, 12);}
     }
 
 

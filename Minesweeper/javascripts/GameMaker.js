@@ -17,8 +17,8 @@ class GameMaker {
         this.radios = document.querySelectorAll('.drop-radio');
         const defaultRadio = document.getElementById('default'); // Check off the default radio button.
             defaultRadio.checked = true;
-        //this.checkedRadio = this.prevCheckedRadio = '0'; // Use this value for testing only.
-        this.checkedRadio = this.prevCheckedRadio = defaultRadio.value;
+        this.checkedRadio = this.prevCheckedRadio = '0'; // Use this value for testing only.
+        //this.checkedRadio = this.prevCheckedRadio = defaultRadio.value;
         this.newGameButton = newGameButton;
         this.newGameButton.addEventListener('click', () => { this.newGame(); });             // New game button.
         document.addEventListener('keydown', e => { if (e.which == 113) this.newGame(); } ); // F2 starts new game.
