@@ -15,30 +15,28 @@ class GameMaker {
         this.game       = null;
         this.gameParentNode = gameParentNode;
         this.radios = document.querySelectorAll('.drop-radio');
-        const defaultRadio = document.getElementById('default'); // Check off the default radio button.
+        const defaultRadio = document.getElementById('default');          // Check off the default radio button.
             defaultRadio.checked = true;
-        this.checkedRadio = this.prevCheckedRadio = '0'; // Use this value for testing only.
-        //this.checkedRadio = this.prevCheckedRadio = defaultRadio.value;
+        this.checkedRadio = this.prevCheckedRadio = 'test';               // Uncomment this for testing only.
+        //this.checkedRadio = this.prevCheckedRadio = defaultRadio.value; // Comment out this line if testing.
         this.newGameButton = newGameButton;
         this.newGameButton.addEventListener('click', () => { this.newGame(); });             // New game button.
-        document.addEventListener('keydown', e => { if (e.which == 113) this.newGame(); } ); // F2 starts new game.
-        // TODO: better solution for finding the checked radio button:
+        document.addEventListener('keydown', e => { if (e.which == 113) this.newGame(); } ); // F2 starts a new game.
         this.radios.forEach(radio => {
-            radio.addEventListener('click', () => {
-                this.checkedRadio = document.querySelector('.drop-radio:checked').value;
-            });
-        });
+            radio.addEventListener('click', () => { this.checkedRadio = radio.value; }); });
         this.gameMake(); // Make a game with default(Intermediate) settings.
     }
 
     newGame(){
-        if(this.checkedRadio !== this.prevCheckedRadio){ // Make a new game if the dimensions have changed.
+        // Make a new game if the dimensions have changed.
+        if(this.checkedRadio !== this.prevCheckedRadio){
             this.prevCheckedRadio = this.checkedRadio;
             this.game.playArea.remove(); // Remove old game DOM elements.
             this.game.stopTimer();       // Stop the timer.
             this.gameMake();
         }
-        else{                                            // Otherwise just reload the game.
+        // Otherwise just reload the game.
+        else{
             this.game.reInit();
         }
     }
@@ -51,25 +49,25 @@ class GameMaker {
 
     setDimensions(mode){
         switch(mode){
-            case '0':
-                this.NumOfRows  = 3;
-                this.NumOfCols  = 3;
+            case 'test':
+                this.NumOfRows  = 5;
+                this.NumOfCols  = 5;
                 this.NumOfMines = 1;
                 this.gameType   = 'Test';
                 break;
-            case '1':
+            case 'begginer':
                 this.NumOfRows  = 8;
                 this.NumOfCols  = 8;
                 this.NumOfMines = 10;
                 this.gameType   = 'Beginner';
                 break;
-            case '2':
+            case 'intermediate':
                 this.NumOfRows  = 16;
                 this.NumOfCols  = 16;
                 this.NumOfMines = 40;
                 this.gameType   = 'Intermediate';
                 break;
-            case '3':
+            case 'expert':
                 this.NumOfRows  = 16;
                 this.NumOfCols  = 30;
                 this.NumOfMines = 99;

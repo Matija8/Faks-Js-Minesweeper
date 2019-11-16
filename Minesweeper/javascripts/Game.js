@@ -139,8 +139,8 @@ class Game {
         if(!this.winSemaphore){
             return;
         }
-        this.winSemaphore = false;
-        let refreshBeforeAlertPromise = new Promise( (resolve, reject) => {
+        this.winSemaphore = false;/* 
+        let refreshBeforeAlertPromise = new Promise( resolve => {
             this.gameEnd();
             resolve();
         });
@@ -148,7 +148,12 @@ class Game {
             window.alert('You WON! :D\n' +
             'Game difficulty: ' + this.gameType + '\n' +
             'Your time is: ' + (new Date(this.endTime)).toISOString().substr(11, 12) + ' ms');
-        });
+        }); */
+        this.gameEnd();
+        window.alert(
+            `You WON! :D\n` +
+            `Game difficulty: ${this.gameType}\n` +
+            `Your time is: ${ new Date(this.endTime).toISOString().substr(11, 12) } ms`);
         //Send win time and game type to the server (Node.js) via ajax...
     }
 
