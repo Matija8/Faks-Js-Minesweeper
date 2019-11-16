@@ -58,7 +58,7 @@ main {
 }
 
 
-.cell:hover {/* TODO: remove on gameEnd()? */
+.cell:hover { /* TODO: remove on gameEnd(), maybe? */
     cursor: pointer;
 }
 
@@ -98,7 +98,7 @@ input, #new-game:hover, #showDropdown:hover {
 }
 
 
-#dropdown {         /* TODO: Make it pretty. */
+#dropdown { /* TODO: Make it pretty. */
     display: none;
     clear: both;
     position: absolute;

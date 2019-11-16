@@ -1,6 +1,5 @@
 'use strict';
 /* jshint browser: true */
-/* jshint node: true */
 /*jshint esversion: 6 */
 
 
@@ -15,10 +14,10 @@ class GameMaker {
         this.game       = null;
         this.gameParentNode = gameParentNode;
         this.radios = document.querySelectorAll('.drop-radio');
-        const defaultRadio = document.getElementById('default');          // Check off the default radio button.
+        const defaultRadio = document.getElementById('default');        // Check off the default radio button.
             defaultRadio.checked = true;
-        this.checkedRadio = this.prevCheckedRadio = 'test';               // Uncomment this for testing only.
-        //this.checkedRadio = this.prevCheckedRadio = defaultRadio.value; // Comment out this line if testing.
+        //this.checkedRadio = this.prevCheckedRadio = 'test';           // Uncomment this for testing only.
+        this.checkedRadio = this.prevCheckedRadio = defaultRadio.value; // Comment out this line if testing.
         this.newGameButton = newGameButton;
         this.newGameButton.addEventListener('click', () => { this.newGame(); });             // New game button.
         document.addEventListener('keydown', e => { if (e.which == 113) this.newGame(); } ); // F2 starts a new game.

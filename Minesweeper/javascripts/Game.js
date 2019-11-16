@@ -1,6 +1,5 @@
 'use strict';
 /* jshint browser: true */
-/* jshint node: true */
 /*jshint esversion: 6 */
 
 
@@ -11,7 +10,7 @@ class Game {
         let maxMines = this.numOfRows * this.numOfCols - 1;
         this.numOfMines = numOfMines > maxMines ? maxMines : numOfMines;
         this.gameType           = gameType; // String denoting the game type.
-        this.style              = style; // Style class.
+        this.style              = style;    // Style class.
         this.parentNode         = parentNode;
         this.playArea           = null;
         this.mineNumberDisplay  = document.getElementById('mine-number-display');
@@ -100,7 +99,6 @@ class Game {
     refreshFlagNumberDisplay(){ this.mineNumberDisplay.innerHTML = `Flags: ${this.numOfRightClicked} / ${this.numOfMines}`; }
 
 
-    //Timer functions.
     startTimer(){
         this.startTime = Date.now();
         this.runningTimer = setInterval(this.refreshTimer.bind(this), 1000);
@@ -118,16 +116,16 @@ class Game {
 
     refreshTimer(){ this.timerDisplay.innerHTML = 'Time: ' + this.timeToString(Date.now() - this.startTime); }
 
-    timeToString(time){ return (new Date(time)).toISOString().substr(11, 8); } //Garbage collector deletes the Date objects, no memory leaks here (hopefully).
+    timeToString(time){ return (new Date(time)).toISOString().substr(11, 8); } // Garbage collector deletes the Date objects, no memory leaks here (hopefully).
 
 
     setRandomMines(firstMine){
         let mineChoices = this.cellMatrixToList();
-        mineChoices.splice(firstMine.row*this.numOfCols + firstMine.col, 1); //remove firstMine from choices.
-        for(let i = 0; i<this.numOfMines; i++){ //Picks n mines from leftover cell choices.
-            let randInt = Math.floor(Math.random() * mineChoices.length); //random number in [0, n).
+        mineChoices.splice(firstMine.row*this.numOfCols + firstMine.col, 1); // Remove firstMine from choices.
+        for(let i = 0; i<this.numOfMines; i++){ // Picks n mines from leftover cell choices.
+            let randInt = Math.floor(Math.random() * mineChoices.length); // Random number in [0, n).
             mineChoices[randInt].mineState = 'MINE!';
-            mineChoices.splice(randInt, 1); //remove selected cell from mine choices.
+            mineChoices.splice(randInt, 1); // Remove selected cell from mine choices.
         }
     }
 
@@ -139,22 +137,15 @@ class Game {
         if(!this.winSemaphore){
             return;
         }
-        this.winSemaphore = false;/* 
-        let refreshBeforeAlertPromise = new Promise( resolve => {
-            this.gameEnd();
-            resolve();
-        });
-        refreshBeforeAlertPromise.then( () => {
-            window.alert('You WON! :D\n' +
-            'Game difficulty: ' + this.gameType + '\n' +
-            'Your time is: ' + (new Date(this.endTime)).toISOString().substr(11, 12) + ' ms');
-        }); */
+        this.winSemaphore = false;
         this.gameEnd();
-        window.alert(
-            `You WON! :D\n` +
-            `Game difficulty: ${this.gameType}\n` +
-            `Your time is: ${ new Date(this.endTime).toISOString().substr(11, 12) } ms`);
-        //Send win time and game type to the server (Node.js) via ajax...
+        setTimeout(() => { // Prevent alert from running before screen refresh (chromium). TODO: different solution?
+            window.alert(
+                `You WON! :D\n` +
+                `Game difficulty: ${this.gameType}\n` +
+                `Your time is: ${ new Date(this.endTime).toISOString().substr(11, 12) } ms`);
+        }, 100);
+        // Send win time and game type to the server (Node.js) via ajax...
     }
 
 
@@ -171,9 +162,9 @@ class Game {
         });
         clickedMine.css.backgroundImage = this.style.image_ClickedMine;
         this.gameEnd();
-        setTimeout(() => {
-            window.alert('Sorry, you just lost :('); //TODO Chromium bug fix: promises instead?
-        } ,100);
+        setTimeout(() => { // Prevent alert from running before screen refresh (chromium).
+            window.alert('Sorry, you just lost :(');
+        }, 100);
     }
 
 

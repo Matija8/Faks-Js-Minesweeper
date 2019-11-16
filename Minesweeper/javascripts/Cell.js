@@ -1,6 +1,5 @@
 'use strict';
 /* jshint browser: true */
-/* jshint node: true */
 /*jshint esversion: 6 */
 
 
@@ -8,14 +7,14 @@ class Cell {
     constructor(row, col, item, game){
         this.row        = row;
         this.col        = col;
-        this.item       = item;          //DOM object reference.
-        this.game       = game;          //Game object.
+        this.item       = item;          // DOM object reference.
+        this.game       = game;          // Game object.
         this.style      = game.style;
-        this.mineState  = 'no-mine';     // {'no-mine', 'MINE!'} 
+        this.mineState  = 'no-mine';     // {'no-mine', 'MINE!'}, TODO: make setters and getters?
         this.clickState = 'not-clicked'; // {'not-clicked', 'left-clicked', 'right-clicked'}
         this.adjacent   = [];
 
-        //Setting cell css properties.
+        // Setting cell css properties.
         this.css = this.item.style;
         this.css.width = this.css.minWidth = this.css.height = this.css.minHeight = this.style.cellSize;
         this.css.fontSize = this.style.fontSize;
@@ -117,22 +116,19 @@ class Cell {
             this.game.setRandomMines(this);
             this.game.startTimer();
         }
-        let promiseRefreshScreen = new Promise( win => {
-            this.clickState = 'left-clicked';   // Register the left-click.
-            this.game.numOfLeftClicked++;
-            this.css.backgroundImage = this.style.image_LeftClick;
-            let mineCount = this.countMines();
-            if(mineCount === 0){
-                this.adjacent.forEach(cell => cell.leftUp() ); // Recursive left-click on a 'free' cell.
-            }
-            else {
-                this.item.innerHTML = mineCount;
-            }
-            if(this.game.winCondition()){
-                win();
-            }
-        });
-        promiseRefreshScreen.then( () => this.game.gameWin() );
+        this.clickState = 'left-clicked';   // Register the left-click.
+        this.game.numOfLeftClicked++;
+        this.css.backgroundImage = this.style.image_LeftClick;
+        let mineCount = this.countMines();
+        if(mineCount === 0){
+            this.adjacent.forEach(cell => cell.leftUp() ); // Recursive left-click on a 'free' cell.
+        }
+        else {
+            this.item.innerHTML = mineCount;
+        }
+        if(this.game.winCondition()){
+            this.game.gameWin();
+        }
     }
 
 
