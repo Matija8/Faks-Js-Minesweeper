@@ -5,14 +5,16 @@
 
 class Cell {
     constructor(row, col, item, game){
-        this.row        = row;
-        this.col        = col;
-        this.item       = item;          // DOM object reference.
-        this.game       = game;          // Game object.
-        this.style      = game.style;
-        this.mineState  = 'no-mine';     // {'no-mine', 'MINE!'}, TODO: make setters and getters?
-        this.clickState = 'not-clicked'; // {'not-clicked', 'left-clicked', 'right-clicked'}
-        this.adjacent   = [];
+        this.row         = row;
+        this.col         = col;
+        this.item        = item;          // DOM object reference.
+        this.game        = game;          // Game object.
+        this.style       = game.style;
+        this.mineStates  = Object.freeze({noMine:'no-mine', MINE:'MINE!'});
+        this._mineState  = this.mineStates.noMine;
+        this.clickStates = Object.freeze({notClicked:'not-clicked', leftClicked:'left-clicked', rightClicked:'right-clicked'});
+        this._clickState = this.clickStates.notClicked;
+        this.adjacent    = [];
 
         // Setting cell css properties.
         this.css = this.item.style;
@@ -22,6 +24,38 @@ class Cell {
         this.css.backgroundSize = 'contain';
         this.setListeners();
         this.item.addEventListener('contextmenu', event => { event.preventDefault(); }); // Deliberately removed from other listeners.
+    }
+
+
+    set mineState(newState){
+        for(let state in this.mineStates){
+            if(newState === this.mineStates[state]){
+                this._mineState = newState;
+                return;
+            }
+        }
+        console.log('Cell set mineState error: Not a valid state: ' + newState);
+    }
+
+
+    get mineState(){
+        return this._mineState;
+    }
+
+
+    set clickState(newState){
+        for(let state in this.clickStates){
+            if(newState === this.clickStates[state]){
+                this._clickState = newState;
+                return;
+            }
+        }
+        console.log('Cell set clickState error: Not a valid state: ' + newState);
+    }
+
+
+    get clickState(){
+        return this._clickState;
     }
 
 
