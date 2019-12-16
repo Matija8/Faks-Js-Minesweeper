@@ -124,7 +124,7 @@ class Game {
         mineChoices.splice(firstMine.row*this.numOfCols + firstMine.col, 1); // Remove firstMine from choices.
         for(let i = 0; i<this.numOfMines; i++){ // Picks n mines from leftover cell choices.
             let randInt = Math.floor(Math.random() * mineChoices.length); // Random number in [0, n).
-            mineChoices[randInt].mineState = 'MINE!';
+            mineChoices[randInt].hasMine = true;
             mineChoices.splice(randInt, 1); // Remove selected cell from mine choices.
         }
     }
@@ -155,9 +155,9 @@ class Game {
         }
         this.lossSemaphore = false;
         this.cellMatrixToList().forEach(cell => {
-            if(cell.mineState === 'MINE!' && cell.clickState !== 'right-clicked'){
+            if(cell.hasMine && cell.clickState !== 'right-clicked'){
                 cell.css.backgroundImage = this.style.image_Mine;}
-            else if(cell.clickState === 'right-clicked' && cell.mineState !== 'MINE!'){
+            else if(cell.clickState === 'right-clicked' && !cell.hasMine){
                 cell.css.backgroundImage = this.style.image_FlaggedWrong;}
         });
         clickedMine.css.backgroundImage = this.style.image_ClickedMine;
@@ -189,7 +189,7 @@ class Game {
         this.refreshFlagNumberDisplay();
 
         this.cellMatrixToList().forEach(cell => {
-            cell.mineState  = 'no-mine';
+            cell.hasMine  = false;
             cell.clickState = 'not-clicked';
             cell.css.backgroundImage = cell.style.image_NotClicked;
             cell.css.backgroundSize = 'contain';

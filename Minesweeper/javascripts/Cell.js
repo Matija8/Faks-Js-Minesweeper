@@ -10,8 +10,7 @@ class Cell {
         this.item        = item;          // DOM object reference.
         this.game        = game;          // Game object.
         this.style       = game.style;
-        this.mineStates  = Object.freeze({noMine:'no-mine', MINE:'MINE!'});
-        this._mineState  = this.mineStates.noMine;
+        this.hasMine     = false;
         this.clickStates = Object.freeze({notClicked:'not-clicked', leftClicked:'left-clicked', rightClicked:'right-clicked'});
         this._clickState = this.clickStates.notClicked;
         this.adjacent    = [];
@@ -24,22 +23,6 @@ class Cell {
         this.css.backgroundSize = 'contain';
         this.setListeners();
         this.item.addEventListener('contextmenu', event => { event.preventDefault(); }); // Deliberately removed from other listeners.
-    }
-
-
-    set mineState(newState){
-        for(let state in this.mineStates){
-            if(newState === this.mineStates[state]){
-                this._mineState = newState;
-                return;
-            }
-        }
-        console.log('Cell set mineState error: Not a valid state: ' + newState);
-    }
-
-
-    get mineState(){
-        return this._mineState;
     }
 
 
@@ -141,7 +124,7 @@ class Cell {
         if(this.clickState !== 'not-clicked'){
             return;
         }
-        if(this.mineState === 'MINE!'){     // Mine hit.
+        if(this.hasMine){     // Mine hit.
             this.game.gameLoss(this);
             return;
         }
@@ -169,7 +152,7 @@ class Cell {
     countMines(){
         let count = 0;
         this.adjacent.forEach(function(cell){
-            if(cell.mineState === 'MINE!')
+            if(cell.hasMine)
                 count++;
         });
         return count;
