@@ -1,5 +1,4 @@
-# JavaScript-Project
-### Minesweeper, playable game in pure JavaScript.
+# Minesweeper :bomb:
 
 ### Goal:
 * #### open all non-mine cells.
