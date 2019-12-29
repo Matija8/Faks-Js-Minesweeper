@@ -145,22 +145,23 @@ class Game {
                 `Game difficulty: ${this.gameType}\n` +
                 `Your time is: ${ new Date(this.endTime).toISOString().substr(11, 12) } ms\n` +
                 `Enter a name to save your score:`,
-                "Super awesome guy (or girl)");
-            let xhr = new XMLHttpRequest();
-            xhr.open('GET', 'http://localhost:8787/highscores');
+                "Super awesome guy (or girl)!");
 
-            xhr.onreadystatechange = function () {
-            	var DONE = 4;
-            	var OK = 200;
-            	if (xhr.readyState === DONE) {
-            		if (xhr.status === OK) {
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://localhost:8787/highscores');
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = () => {
+                let DONE = XMLHttpRequest.DONE,
+                    OK = 200;
+            	if (this.readyState === DONE) {
+            		if (this.status === OK) {
             			console.log(xhr.responseText);
             		} else {
-            			//console.log('Error: ' + xhr.status);
+            			console.log('Ajax Error: ' + xhr.status);
             		}
             	}
             };
-            xhr.send(null);
+            xhr.send(`userName=${userName}&score=${this.endTime}`);
         }, 100);
         // Send win time and game type to the server (Node.js) via ajax...
     }
