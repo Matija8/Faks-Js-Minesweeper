@@ -1,6 +1,6 @@
 'use strict';
 /* jshint browser: true */
-/*jshint esversion: 6 */
+/* jshint esversion: 6 */
 
 
 class Game {
@@ -139,11 +139,32 @@ class Game {
         }
         this.winSemaphore = false;
         this.gameEnd();
-        setTimeout(() => { // Prevent alert from running before screen refresh (chromium). TODO: different solution?
-            window.alert(
+        setTimeout(() => { // Prevent prompt from running before screen refresh (chromium). TODO: different solution?
+            let userName = window.prompt(
                 `You WON! :D\n` +
                 `Game difficulty: ${this.gameType}\n` +
-                `Your time is: ${ new Date(this.endTime).toISOString().substr(11, 12) } ms`);
+                `Your time is: ${ new Date(this.endTime).toISOString().substr(11, 12) } ms\n` +
+                `Enter a name to save your score:`,
+                "Super awesome guy (or girl)");
+            //TODO: CORS ERROR!
+            /*if (userName.trim() !== ""){
+                //TODO: security checks?
+                const options = {
+                    headers: {'Access-Control-Allow-Origin': '*'},
+                    crossdomain: true
+                };
+                axios({
+                    method: 'get',
+                    url: 'localhost:8787/highscores'
+                    //url: 'https://postman-echo.com/get?foo1=bar1&foo2=bar2'
+                }, options)
+                .then(res => {
+                    console.log(res);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+            }*/
         }, 100);
         // Send win time and game type to the server (Node.js) via ajax...
     }
