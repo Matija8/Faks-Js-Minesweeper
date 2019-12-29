@@ -153,8 +153,8 @@ class Game {
             xhr.onreadystatechange = () => {
                 let DONE = XMLHttpRequest.DONE,
                     OK = 200;
-            	if (this.readyState === DONE) {
-            		if (this.status === OK) {
+            	if (xhr.readyState === DONE) {
+            		if (xhr.status === OK) {
             			console.log(xhr.responseText);
             		} else {
             			console.log('Ajax Error: ' + xhr.status);
