@@ -146,25 +146,21 @@ class Game {
                 `Your time is: ${ new Date(this.endTime).toISOString().substr(11, 12) } ms\n` +
                 `Enter a name to save your score:`,
                 "Super awesome guy (or girl)");
-            //TODO: CORS ERROR!
-            /*if (userName.trim() !== ""){
-                //TODO: security checks?
-                const options = {
-                    headers: {'Access-Control-Allow-Origin': '*'},
-                    crossdomain: true
-                };
-                axios({
-                    method: 'get',
-                    url: 'localhost:8787/highscores'
-                    //url: 'https://postman-echo.com/get?foo1=bar1&foo2=bar2'
-                }, options)
-                .then(res => {
-                    console.log(res);
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-            }*/
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', 'http://localhost:8787/highscores');
+
+            xhr.onreadystatechange = function () {
+            	var DONE = 4;
+            	var OK = 200;
+            	if (xhr.readyState === DONE) {
+            		if (xhr.status === OK) {
+            			console.log(xhr.responseText);
+            		} else {
+            			//console.log('Error: ' + xhr.status);
+            		}
+            	}
+            };
+            xhr.send(null);
         }, 100);
         // Send win time and game type to the server (Node.js) via ajax...
     }
