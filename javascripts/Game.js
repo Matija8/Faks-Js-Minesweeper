@@ -161,7 +161,7 @@ class Game {
             		}
             	}
             };
-            xhr.send(`userName=${userName}&score=${this.endTime}`);
+            xhr.send(`userName=${userName}&difficulty=${this.gameType}&score=${this.endTime}`);
         }, 100);
         // Send win time and game type to the server (Node.js) via ajax...
     }
