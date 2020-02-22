@@ -1,6 +1,6 @@
 'use strict';
 /* jshint browser: true */
-/*jshint esversion: 6 */
+/* jshint esversion: 6 */
 
 
 class GameMaker {
@@ -22,7 +22,8 @@ class GameMaker {
         this.newGameButton.addEventListener('click', () => { this.newGame(); });             // New game button.
         document.addEventListener('keydown', e => { if (e.which == 113) this.newGame(); } ); // F2 starts a new game.
         this.radios.forEach(radio => {
-            radio.addEventListener('click', () => { this.checkedRadio = radio.value; }); });
+            radio.addEventListener('click', () => this.checkedRadio = radio.value );
+        });
         this.gameMake(); // Make a game with default(Intermediate) settings.
     }
 
@@ -54,7 +55,7 @@ class GameMaker {
                 this.NumOfMines = 1;
                 this.gameType   = 'Test';
                 break;
-            case 'begginer':
+            case 'beginner':
                 this.NumOfRows  = 8;
                 this.NumOfCols  = 8;
                 this.NumOfMines = 10;
