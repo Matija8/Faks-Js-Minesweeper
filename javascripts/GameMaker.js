@@ -1,7 +1,4 @@
 'use strict';
-/* jshint browser: true */
-/* jshint esversion: 6 */
-
 
 class GameMaker {
     constructor(newGameButton, gameParentNode){

@@ -75,7 +75,7 @@ main {
 }
 
 #mine-number-display, #timer {
-    display: 'none';
+    display: none;
     /*
     padding: 3px 10px;
     display: 'block';

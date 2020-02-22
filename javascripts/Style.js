@@ -1,7 +1,4 @@
 'use strict';
-/* jshint browser: true */
-/*jshint esversion: 6 */
-
 
 class Style {
     constructor(cellSize = '35px', fontSize = '22px'){

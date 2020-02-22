@@ -1,7 +1,4 @@
 'use strict';
-/* jshint browser: true */
-/* jshint esversion: 6 */
-
 
 class Game {
     constructor(numOfRows, numOfCols, numOfMines, parentNode, gameType, style){
@@ -65,7 +62,7 @@ class Game {
             leftCheck   = (col === 0)                ?   col : col-1,
             rightCheck  = (col === this.numOfCols-1) ?   col : col+1,
             topCheck    = (row === 0)                ?   row : row-1,
-            bottomCheck = (row === this.numOfRows-1) ?   row : row+1;            
+            bottomCheck = (row === this.numOfRows-1) ?   row : row+1;
         for(let i = topCheck; i<=bottomCheck; i++){
             for(let j = leftCheck; j<=rightCheck; j++){
                 if(i === row && j === col){
@@ -130,7 +127,7 @@ class Game {
     }
 
 
-    winCondition(){ return this.numOfLeftClicked === this.numOfCols * this.numOfRows - this.numOfMines; }    
+    winCondition(){ return this.numOfLeftClicked === this.numOfCols * this.numOfRows - this.numOfMines; }
 
 
     gameWin(){

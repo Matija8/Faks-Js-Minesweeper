@@ -1,7 +1,4 @@
 'use strict';
-/* jshint browser: true */
-/*jshint esversion: 6 */
-
 
 class Cell {
     constructor(row, col, item, game){

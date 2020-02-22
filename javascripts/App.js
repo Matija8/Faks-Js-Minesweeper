@@ -1,7 +1,4 @@
 'use strict';
-/* jshint browser: true */
-/*jshint esversion: 6 */
-
 
 const   dropdownButton = document.getElementById('showDropdown'),
         dropdown = document.getElementById('dropdown'),
