@@ -17,11 +17,11 @@
 
         <header>
             <div id='top-menu'>
-                <div class='top-menu-item'>
-                    <div id='new-game'>New Game</div>
+                <div class='top-menu-item-wrapper'>
+                    <div class='top-menu-item' id='new-game'>New Game</div>
                 </div>
-                <div class='top-menu-item'>
-                    <div id='showDropdown'>Game Mode
+                <div class='top-menu-item-wrapper'>
+                    <div class='top-menu-item' id='showDropdown'>Game Mode
                         <div id='dropdown'>
                             <div><input type='radio' name='mode' class='drop-radio' value='beginner'> Beginner </div><br>
                             <div><input type='radio' name='mode' class='drop-radio' value='intermediate' id='default'> Intermediate </div><br>
@@ -29,17 +29,21 @@
                         </div>
                     </div>
                 </div>
-                <div class='top-menu-item'>
-                    <div id='mine-number-display'></div>
+                <div class='top-menu-item-wrapper'>
+                    <div class='top-menu-item' id='mine-number-display'></div>
                 </div>
-                <div class='top-menu-item'>
-                    <div id='timer'></div>
+                <div class='top-menu-item-wrapper'>
+                    <div class='top-menu-item' id='timer'></div>
                 </div>
             </div>
         </header>
 
         <main>
-            <div id='play-area-container'> <!-- app.js adds rows and columns dynamicly. --> </div>
+            <div id='play-area-container'>
+
+                <!-- app.js adds rows and columns here dynamicly. -->
+
+            </div>
         </main>
 
     </body>
