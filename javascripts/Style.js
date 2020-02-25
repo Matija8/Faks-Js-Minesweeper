@@ -11,5 +11,6 @@ class Style {
         this.image_Mine            = 'url("./images/mine.png")';
         this.image_FlaggedWrong    = 'url("./images/mine_wrong.png")';
         this.image_ClickedMine     = 'url("./images/mine_clicked.png")';
+        this.menuItemDisplay       = 'inline-block';
     }
 }

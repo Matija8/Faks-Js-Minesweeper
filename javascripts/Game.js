@@ -26,7 +26,7 @@ class Game {
         this.cellMatrix         = [];
 
         [this.mineNumberDisplay, this.timerDisplay].forEach(domElement => {
-            domElement.style.display = "block";
+            domElement.style.display = this.style.menuItemDisplay;
             domElement.style.padding = '3px 10px';});
         this.timerDisplay.innerHTML = 'Time: ' + this.timeToString(0);
         this.refreshFlagNumberDisplay();

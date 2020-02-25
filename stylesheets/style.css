@@ -22,10 +22,15 @@ main {
 
 
 #top-menu {
-    display: inline-block;
+    display: flex;
     margin: auto;
     clear: both;
     overflow: auto;
+}
+
+.top-menu-item {
+    text-align: center;
+    width: 100%;
 }
 
 
@@ -64,10 +69,10 @@ main {
 
 
 #new-game, #mine-number-display, #timer, #showDropdown {
+    display: inline-block;
     background-color: lavenderblush;
     height: 20px;
     border-radius: 8px;
-    float: left;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 15px;
     margin: 20px 50px 20px 50px;
