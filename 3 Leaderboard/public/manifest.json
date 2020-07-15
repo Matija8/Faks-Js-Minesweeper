@@ -1,0 +1,18 @@
+{
+  "short_name": "Leaderboard",
+  "name": "React SPA Leaderboard",
+  "icons": [
+    {
+      "src": "matf.ico",
+      "type": "image/ico"
+    },
+    {
+      "src": "matf.gif",
+      "type": "image/gif"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

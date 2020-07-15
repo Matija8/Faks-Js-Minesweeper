@@ -1,0 +1,10 @@
+.HighscoreItem {
+  background-color: blanchedalmond;
+  color: black;
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  padding: 10px 0;
+  margin-top: 20px;
+  border: 1px solid black;
+}

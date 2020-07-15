@@ -1,0 +1,8 @@
+.highscore-list {
+    width: 600px;
+    margin: 80px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
