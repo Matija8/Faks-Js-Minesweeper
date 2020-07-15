@@ -25,7 +25,7 @@ export class HighscoreController {
 
 
     private static async getHighscores (req: Request, res: Response) {
-        let [name, diff]: [string, string] = [req.query.userName, req.query.difficulty],
+        let [name, diff]: [string, string] = [req.query.userName, req.query.difficulty] as [string, string],
             searchParams: {[k: string]: any} = {};
         let error: string = HighscoreController.setSearchParams (searchParams, [name, diff]);
         if (error) {

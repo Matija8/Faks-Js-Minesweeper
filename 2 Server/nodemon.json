@@ -1,6 +1,6 @@
 {
-    "watch": ["src"],
-    "ext": "ts",
-    "ignore": ["src/**/*.spec.ts", "docker-entrypoint-initdb.d/*", "docker-compose.yml"],
-    "exec": "npm run buildnstart"
-  }
+  "watch": ["src"],
+  "ext": "ts",
+  "ignore": ["src/**/*.spec.ts", "docker-entrypoint-initdb.d/*", "docker-compose.yml"],
+  "exec": "npm start"
+}

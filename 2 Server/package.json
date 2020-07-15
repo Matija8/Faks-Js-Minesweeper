@@ -1,39 +1,36 @@
 {
-  "name": "levi9-server",
+  "name": "minesweeper-server",
   "version": "1.0.0",
-  "description": "Server for saving and manipulating js game highscores.",
-  "main": "build/index.js",
+  "description": "Server for saving and manipulating minesweeper highscores.",
+  "main": "src/index.ts",
   "scripts": {
+    "start": "ts-node src/index",
     "nodemon": "nodemon",
-    "buildnstart": "npm run build; npm run docker-up; npm start",
     "build": "tsc",
-    "start": "node build/index.js",
     "docker-up": "docker-compose up -d",
-    "docker-stop": "docker stop matija-mongo matija-mongo-express",
+    "docker-stop": "docker stop mines-mongo mines-express",
     "docker-ls": "docker ps -a",
-    "docker-rm": "docker rm -f matija-mongo matija-mongo-express || true",
-    "clean": "rimraf build; npm run docker-rm",
-    "test": "node build/test/api/Highscores.spec.js"
+    "docker-rm": "docker rm -f mines-mongo mines-express || true",
+    "clean": "rimraf build; npm run docker-rm"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Matija8/Levi9-Node.js.git"
+    "url": "git+https://github.com/Matija8/Js-Minesweeper"
   },
   "keywords": [
     "Node.js",
     "Express"
   ],
-  "author": "Matija Milicevic 133/2015",
+  "author": "Matija Milicevic",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Matija8/Levi9-Node.js/issues"
+    "url": "https://github.com/Matija8/Js-Minesweeper/issues"
   },
-  "homepage": "https://github.com/Matija8/Levi9-Node.js#readme",
+  "homepage": "https://github.com/Matija8/Js-Minesweeper",
   "devDependencies": {
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.2",
     "@types/mongodb": "^3.3.14",
-    "axios": "^0.19.0",
     "nodemon": "^2.0.2",
     "typescript": "^3.7.3"
   },
@@ -41,6 +38,7 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "mongodb": "^3.4.1"
+    "mongodb": "^3.4.1",
+    "ts-node": "^8.10.2"
   }
 }
