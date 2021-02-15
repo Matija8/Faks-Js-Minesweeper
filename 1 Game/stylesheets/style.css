@@ -1,134 +1,127 @@
 body {
-    --color-light: lavenderblush;
-    --color-dark: #003e9b;
-    background-color: var(--color-light);
-    margin: auto;
+  --color-light: lavenderblush;
+  --color-dark: #003e9b;
+  background-color: var(--color-light);
+  margin: auto;
 }
-
 
 header {
-    background-color: var(--color-dark);
-    width: auto;
-    margin: auto;
-    margin-bottom: 30px;
-    text-align: center;
+  background-color: var(--color-dark);
+  width: auto;
+  margin: auto;
+  margin-bottom: 30px;
+  text-align: center;
 }
-
 
 main {
-    width: auto;
-    clear: both;
+  width: auto;
+  clear: both;
 }
 
-
 #top-menu {
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    margin: auto;
-    clear: both;
-    overflow: auto;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  clear: both;
+  overflow: auto;
 }
 
 .top-menu-item-wrapper {
-    text-align: center;
+  text-align: center;
 }
-
 
 #play-area {
-    margin: auto;
-    display: table;
-    clear: both;
-    overflow: auto;
+  margin: auto;
+  display: table;
+  clear: both;
+  overflow: auto;
 }
-
 
 .row {
-    clear: both;
-    overflow: auto;
-    display: table-row;
+  clear: both;
+  overflow: auto;
+  display: table-row;
 }
-
 
 .cell {
-    display: table-cell;
-    border: 0.5px solid gray;
+  display: table-cell;
+  border: 0.5px solid gray;
 
-    /* align text */
-    text-align: center;
-    vertical-align: middle;
+  /* align text */
+  text-align: center;
+  vertical-align: middle;
 
-    /* font */
-    font-family: Tahoma, Geneva, sans-serif;
-    font-size: 20px;
+  /* font */
+  font-family: Tahoma, Geneva, sans-serif;
+  font-size: 20px;
 }
 
-
-.cell:hover { /* TODO: remove on gameEnd(), maybe? */
-    cursor: pointer;
+.cell:hover {
+  /* TODO: remove on gameEnd(), maybe? */
+  cursor: pointer;
 }
-
 
 .top-menu-item {
-    display: inline-block;
-    background-color: var(--color-light);
-    height: 20px;
-    white-space: nowrap;
-    text-align: center;
-    border-radius: 7px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 15px;
-    margin-left: 50px;
-    margin-right: 50px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 3px 10px;
+  display: inline-block;
+  background-color: var(--color-light);
+  height: 20px;
+  white-space: nowrap;
+  text-align: center;
+  border-radius: 7px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 3px 10px;
 }
 
-#mine-number-display, #timer {
-    display: none;
+#mine-number-display,
+#timer {
+  display: none;
 }
 
-
-input, #new-game:hover, #showDropdown:hover {
-    cursor: pointer;
+input,
+#new-game:hover,
+#showDropdown:hover {
+  cursor: pointer;
 }
 
 #dropdown:hover {
-    cursor: default;
+  cursor: default;
 }
 
-
-#dropdown { /* TODO: Make it pretty. */
-    display: none;
-    clear: both;
-    position: absolute;
-    border-radius: 6px;
-    margin-top: 5px;
-    background-color: var(--color-light);
-    z-index: 1;
+#dropdown {
+  /* TODO: Make it pretty. */
+  display: none;
+  clear: both;
+  position: absolute;
+  border-radius: 6px;
+  margin-top: 5px;
+  background-color: var(--color-light);
+  z-index: 1;
 }
 
-#dropdown div{
-    margin: 7px 7px 7px 7px;
-    clear: none;
+#dropdown div {
+  margin: 7px 7px 7px 7px;
+  clear: none;
 }
-
 
 input {
-    float: left;
+  float: left;
 }
-
 
 /* disable text selection.
 from: https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting */
 .noselect {
-    -webkit-touch-callout: none; /* iOS Safari */
-      -webkit-user-select: none; /* Safari */
-       -khtml-user-select: none; /* Konqueror HTML */
-         -moz-user-select: none; /* Old versions of Firefox */
-          -ms-user-select: none; /* Internet Explorer/Edge */
-              user-select: none; /* Non-prefixed version, currently
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
                                     supported by Chrome, Opera and Firefox */
 }

@@ -1,50 +1,74 @@
 <!DOCTYPE html>
-<html lang='en'>
-    <head>
-        <title>Minesweeper!</title>
-        <meta charset='UTF-8'>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <link href='stylesheets/style.css' rel='stylesheet' type='text/css'>
+<html lang="en">
+  <head>
+    <title>Minesweeper!</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="stylesheets/style.css" rel="stylesheet" type="text/css" />
 
-        <!-- JavaScript imports. -->
-        <script src='javascripts/Style.js'      defer></script>
-        <script src='javascripts/Cell.js'       defer></script>
-        <script src='javascripts/Game.js'       defer></script>
-        <script src='javascripts/GameMaker.js'  defer></script>
-        <script src='javascripts/App.js'        defer></script>
-    </head>
-    <body class='noselect'>
-
-        <header>
-            <div id='top-menu'>
-                <div class='top-menu-item-wrapper'>
-                    <div class='top-menu-item' id='new-game'>New Game</div>
-                </div>
-                <div class='top-menu-item-wrapper'>
-                    <div class='top-menu-item' id='showDropdown'>Game Mode
-                        <div id='dropdown'>
-                            <div><input type='radio' name='mode' class='drop-radio' value='beginner'> Beginner </div><br>
-                            <div><input type='radio' name='mode' class='drop-radio' value='intermediate' id='default'> Intermediate </div><br>
-                            <div><input type='radio' name='mode' class='drop-radio' value='expert'> Expert </div>
-                        </div>
-                    </div>
-                </div>
-                <div class='top-menu-item-wrapper'>
-                    <div class='top-menu-item' id='mine-number-display'></div>
-                </div>
-                <div class='top-menu-item-wrapper'>
-                    <div class='top-menu-item' id='timer'></div>
-                </div>
+    <!-- JavaScript imports. -->
+    <script src="javascripts/Style.js" defer></script>
+    <script src="javascripts/Cell.js" defer></script>
+    <script src="javascripts/Game.js" defer></script>
+    <script src="javascripts/GameMaker.js" defer></script>
+    <script src="javascripts/App.js" defer></script>
+  </head>
+  <body class="noselect">
+    <header>
+      <div id="top-menu">
+        <div class="top-menu-item-wrapper">
+          <div class="top-menu-item" id="new-game">New Game</div>
+        </div>
+        <div class="top-menu-item-wrapper">
+          <div class="top-menu-item" id="showDropdown">
+            Game Mode
+            <div id="dropdown">
+              <div>
+                <input
+                  type="radio"
+                  name="mode"
+                  class="drop-radio"
+                  value="beginner"
+                />
+                Beginner
+              </div>
+              <br />
+              <div>
+                <input
+                  type="radio"
+                  name="mode"
+                  class="drop-radio"
+                  value="intermediate"
+                  id="default"
+                />
+                Intermediate
+              </div>
+              <br />
+              <div>
+                <input
+                  type="radio"
+                  name="mode"
+                  class="drop-radio"
+                  value="expert"
+                />
+                Expert
+              </div>
             </div>
-        </header>
+          </div>
+        </div>
+        <div class="top-menu-item-wrapper">
+          <div class="top-menu-item" id="mine-number-display"></div>
+        </div>
+        <div class="top-menu-item-wrapper">
+          <div class="top-menu-item" id="timer"></div>
+        </div>
+      </div>
+    </header>
 
-        <main>
-            <div id='play-area-container'>
-
-                <!-- app.js adds rows and columns here dynamicly. -->
-
-            </div>
-        </main>
-
-    </body>
+    <main>
+      <div id="play-area-container">
+        <!-- app.js adds rows and columns here dynamicly. -->
+      </div>
+    </main>
+  </body>
 </html>
