@@ -1,7 +1,11 @@
 'use strict';
 
 class Game {
-  constructor(numOfRows, numOfCols, numOfMines, parentNode, gameType, style) {
+  constructor(
+    { numOfRows, numOfCols, numOfMines, gameType },
+    parentNode,
+    style
+  ) {
     this.numOfRows = numOfRows;
     this.numOfCols = numOfCols;
     let maxMines = this.numOfRows * this.numOfCols - 1;
@@ -56,6 +60,10 @@ class Game {
     });
 
     this.setMouseFlagListeners();
+  }
+
+  removePlayArea() {
+    this.playArea.remove();
   }
 
   setAdjacentCells(cell) {

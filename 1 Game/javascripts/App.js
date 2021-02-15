@@ -1,17 +1,19 @@
 'use strict';
 
 const dropdownButton = document.getElementById('showDropdown'),
-  dropdown = document.getElementById('dropdown'),
+  dropdownMenu = document.getElementById('dropdown'),
   newGameButton = document.getElementById('new-game'),
   gameParentNode = document.getElementById('play-area-container'),
   gameController = new GameMaker(newGameButton, gameParentNode);
-dropdownButton.addEventListener('mouseenter', () => showMenu(dropdown, true));
-dropdownButton.addEventListener('mouseleave', () => showMenu(dropdown, false));
 
-function showMenu(dropdown, show) {
-  if (show) {
-    dropdown.style.display = 'block';
-  } else {
-    dropdown.style.display = 'none';
-  }
-}
+const setMenuVisible = function showOrHideDropdownMenu(dropdown, show) {
+  dropdown.style.display = show ? 'block' : 'none';
+};
+
+dropdownButton.addEventListener('mouseenter', () =>
+  setMenuVisible(dropdownMenu, true)
+);
+
+dropdownButton.addEventListener('mouseleave', () =>
+  setMenuVisible(dropdownMenu, false)
+);
