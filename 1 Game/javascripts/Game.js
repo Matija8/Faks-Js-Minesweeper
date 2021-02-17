@@ -62,6 +62,11 @@ class Game {
     this.setMouseFlagListeners();
   }
 
+  destroySelf() {
+    this.removePlayArea();
+    this.stopTimer();
+  }
+
   removePlayArea() {
     this.playArea.remove();
   }
@@ -142,7 +147,6 @@ class Game {
 
   setRandomMines(firstCell) {
     let mineChoices = this.cellMatrixToList();
-    console.log(this);
     this.removeFirstCellFromChoicesForMines(firstCell, mineChoices);
     for (let i = 0; i < this.numOfMines; i++) {
       let randIndex = Math.floor(Math.random() * mineChoices.length);

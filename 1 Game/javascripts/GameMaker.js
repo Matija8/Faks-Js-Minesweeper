@@ -2,28 +2,32 @@
 
 class GameMaker {
   constructor(newGameButton, gameParentNode) {
-    this.gameSettings = {
-      numOfRows: undefined,
-      numOfCols: undefined,
-      numOfMines: undefined,
-      gameType: undefined,
-    };
-    this.CellSize = '45px';
-    this.FontSize = '22px';
-    this.game = null;
-    this.gameParentNode = gameParentNode;
-    this.radios = document.querySelectorAll('.drop-radio');
+    this._gameParentNode = gameParentNode;
+    this._game = null;
+    // this._testing = true;
+    this._checkedRadio = this.getDefaultRadioBtnValue();
+    this._prevCheckedRadio = this._checkedRadio;
 
+    this.addEventListeners(newGameButton);
+
+    this.makeGame();
+  }
+
+  getDefaultRadioBtnValue() {
     const defaultRadioBtn = this.tryGetDefaultRadioBtn();
-    if (!defaultRadioBtn) {
-      throw `Can't get default radio button!?`;
+    if (!defaultRadioBtn || defaultRadioBtn.type !== 'radio') {
+      throw Error(`Can't get default radio button!?`);
     }
     defaultRadioBtn.checked = true;
-    this.checkedRadio = this.prevCheckedRadio = 'test';
-    // this.checkedRadio = this.prevCheckedRadio = defaultRadioBtn.value;
+    return this._testing ? 'test' : defaultRadioBtn.value;
+  }
 
-    this.newGameButton = newGameButton;
-    this.newGameButton.addEventListener('click', () => {
+  tryGetDefaultRadioBtn() {
+    return document.getElementById('default-radio');
+  }
+
+  addEventListeners(newGameButton) {
+    newGameButton.addEventListener('click', () => {
       this.newGame();
     });
 
@@ -32,43 +36,40 @@ class GameMaker {
     });
 
     this.addDifficultyChangeClickListeners();
-    this.gameMake();
-  }
-
-  tryGetDefaultRadioBtn() {
-    return document.getElementById('default');
   }
 
   addDifficultyChangeClickListeners() {
-    this.radios.forEach((radio) => {
-      radio.addEventListener('click', () => {
-        this.checkedRadio = radio.value;
+    const radioBtns = document.querySelectorAll('.drop-radio');
+
+    radioBtns.forEach((radioBtn) => {
+      radioBtn.addEventListener('click', () => {
+        this._checkedRadio = radioBtn.value;
       });
     });
   }
 
   newGame() {
-    const dimensionsHaveChanged = this.checkedRadio !== this.prevCheckedRadio;
+    const dimensionsHaveChanged = this._checkedRadio !== this._prevCheckedRadio;
     if (dimensionsHaveChanged) {
-      this.prevCheckedRadio = this.checkedRadio;
-      this.game.removePlayArea(); // Remove old game DOM elements.
-      this.game.stopTimer(); // Stop the timer.
-      this.gameMake();
+      this._prevCheckedRadio = this._checkedRadio;
+      this.makeGame();
     } else {
-      this.game.reInit();
+      this._game.reInit();
     }
   }
 
-  gameMake() {
-    this.setDimensions(this.checkedRadio);
-    this.game = new Game(
-      this.gameSettings,
-      this.gameParentNode,
-      new Style(this.CellSize, this.FontSize)
+  makeGame() {
+    if (this._game) {
+      this._game.destroySelf();
+    }
+    this._game = new Game(
+      this.getDimensions(this._checkedRadio),
+      this._gameParentNode,
+      new Style('45px', '22px')
     );
   }
 
-  setDimensions(mode) {
+  getDimensions(mode) {
     const presets = Object.freeze({
       test: {
         numOfRows: 5,
@@ -95,9 +96,14 @@ class GameMaker {
         gameType: 'Expert',
       },
     });
-    this.gameSettings = presets[mode];
-    if (this.gameSettings === undefined) {
+    const selected = presets[mode];
+    if (!this.dimensionsAreValid(selected)) {
       throw Error('Bad mode!');
     }
+    return selected;
+  }
+
+  dimensionsAreValid(dimensions) {
+    return typeof dimensions === 'object' && dimensions !== null;
   }
 }
