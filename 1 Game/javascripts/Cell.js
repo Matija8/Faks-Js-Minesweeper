@@ -5,7 +5,7 @@ class Cell {
     this.row = row;
     this.col = col;
     this.item = item; // DOM object reference.
-    this.game = game; // Game object.
+    this.game = game;
     this.style = game.style;
     this.hasMine = false;
     this.clickStates = Object.freeze({
@@ -15,17 +15,17 @@ class Cell {
     });
     this._clickState = this.clickStates.notClicked;
     this.adjacent = [];
+    this.setListeners();
 
-    // Setting cell css properties.
     this.css = this.item.style;
+    this.setCssProperties();
+  }
+
+  setCssProperties() {
     this.css.width = this.css.minWidth = this.css.height = this.css.minHeight = this.style.cellSize;
     this.css.fontSize = this.style.fontSize;
     this.css.backgroundImage = this.style.image_NotClicked;
     this.css.backgroundSize = 'contain';
-    this.setListeners();
-    this.item.addEventListener('contextmenu', (event) => {
-      event.preventDefault();
-    }); // Deliberately removed from other listeners.
   }
 
   set clickState(newState) {
@@ -43,33 +43,20 @@ class Cell {
   }
 
   setListeners() {
-    this.listenerFunctions = [];
-    this.listenerFunctions.push([
-      'mousedown',
-      (event) => {
-        this.mouseDown(event);
-      },
-    ]);
-    this.listenerFunctions.push([
-      'mouseup',
-      (event) => {
-        this.mouseUp(event);
-      },
-    ]);
-    this.listenerFunctions.push([
-      'mouseenter',
-      () => {
-        this.mouseIn();
-      },
-    ]);
-    this.listenerFunctions.push([
-      'mouseout',
-      () => {
-        this.mouseOut();
-      },
-    ]);
+    this.listenerFunctions = [
+      ['mousedown', this.mouseDown],
+      ['mouseup', this.mouseUp],
+      ['mouseenter', this.mouseIn],
+      ['mouseout', this.mouseOut],
+    ].map(([event, func]) => [event, func.bind(this)]);
+
     this.listenerFunctions.forEach((pair) => {
       this.item.addEventListener(...pair);
+    });
+
+    // TODO
+    this.item.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
     });
   }
 
@@ -136,16 +123,11 @@ class Cell {
       return;
     }
     if (this.hasMine) {
-      // Mine hit.
       this.game.gameLoss(this);
       return;
     }
-    if (this.game.firstClick) {
-      // First click in the game. Still a normal left-click.
-      this.game.firstClick = false;
-      this.game.setRandomMines(this);
-      this.game.startTimer();
-    }
+    this.game.cellClick(this); // TODO: Don't hold ref to game.
+
     this.clickState = 'left-clicked'; // Register the left-click.
     this.game.numOfLeftClicked++;
     this.css.backgroundImage = this.style.image_LeftClick;

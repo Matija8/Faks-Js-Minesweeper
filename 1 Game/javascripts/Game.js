@@ -20,7 +20,7 @@ class Game {
     this.numOfRightClicked = 0;
     this.winSemaphore = true; // Hack to prevent multiple wins on empty cell recursive left-click.
     this.lossSemaphore = true; // TODO: different solution?
-    this.firstClick = true; // Mines are set only on the first left-click.
+    this.isFirstClick = true; // Mines are set only on the first left-click.
     this.listenersRemoved = false;
     this.leftDownFlag = false;
     this.midDownFlag = false;
@@ -126,17 +126,33 @@ class Game {
 
   timeToString(time) {
     return new Date(time).toISOString().substr(11, 8);
-  } // Garbage collector deletes the Date objects, no memory leaks here (hopefully).
+  }
 
-  setRandomMines(firstMine) {
-    let mineChoices = this.cellMatrixToList();
-    mineChoices.splice(firstMine.row * this.numOfCols + firstMine.col, 1); // Remove firstMine from choices.
-    for (let i = 0; i < this.numOfMines; i++) {
-      // Picks n mines from leftover cell choices.
-      let randInt = Math.floor(Math.random() * mineChoices.length); // Random number in [0, n).
-      mineChoices[randInt].hasMine = true;
-      mineChoices.splice(randInt, 1); // Remove selected cell from mine choices.
+  cellClick(cell) {
+    if (this.isFirstClick) {
+      this.isFirstClick = false;
+      this.firstClick(cell);
     }
+  }
+
+  firstClick(cell) {
+    this.setRandomMines(cell);
+    this.startTimer();
+  }
+
+  setRandomMines(firstCell) {
+    let mineChoices = this.cellMatrixToList();
+    console.log(this);
+    this.removeFirstCellFromChoicesForMines(firstCell, mineChoices);
+    for (let i = 0; i < this.numOfMines; i++) {
+      let randIndex = Math.floor(Math.random() * mineChoices.length);
+      mineChoices[randIndex].hasMine = true;
+      mineChoices.splice(randIndex, 1);
+    }
+  }
+
+  removeFirstCellFromChoicesForMines(firstCell, mineChoices) {
+    mineChoices.splice(firstCell.row * this.numOfCols + firstCell.col, 1);
   }
 
   winCondition() {
@@ -218,7 +234,7 @@ class Game {
     this.timerDisplay.innerHTML = 'Time: ' + this.timeToString(0);
     this.numOfLeftClicked = 0;
     this.numOfRightClicked = 0;
-    this.firstClick = true;
+    this.isFirstClick = true;
     this.winSemaphore = true;
     this.lossSemaphore = true;
     this.midDownFlag = false;
