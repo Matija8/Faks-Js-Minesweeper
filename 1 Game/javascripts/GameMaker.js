@@ -19,7 +19,8 @@ class GameMaker {
       throw `Can't get default radio button!?`;
     }
     defaultRadioBtn.checked = true;
-    this.checkedRadio = this.prevCheckedRadio = defaultRadioBtn.value;
+    this.checkedRadio = this.prevCheckedRadio = 'test';
+    // this.checkedRadio = this.prevCheckedRadio = defaultRadioBtn.value;
 
     this.newGameButton = newGameButton;
     this.newGameButton.addEventListener('click', () => {
@@ -31,7 +32,7 @@ class GameMaker {
     });
 
     this.addDifficultyChangeClickListeners();
-    this.gameMake(); // Make a game with default(Intermediate) settings.
+    this.gameMake();
   }
 
   tryGetDefaultRadioBtn() {
@@ -40,7 +41,9 @@ class GameMaker {
 
   addDifficultyChangeClickListeners() {
     this.radios.forEach((radio) => {
-      radio.addEventListener('click', () => (this.checkedRadio = radio.value));
+      radio.addEventListener('click', () => {
+        this.checkedRadio = radio.value;
+      });
     });
   }
 
@@ -66,39 +69,35 @@ class GameMaker {
   }
 
   setDimensions(mode) {
-    switch (mode) {
-      case 'test':
-        this.gameSettings = {
-          numOfRows: 5,
-          numOfCols: 5,
-          numOfMines: 1,
-          gameType: 'Test',
-        };
-        return;
-      case 'beginner':
-        this.gameSettings = {
-          numOfRows: 8,
-          numOfCols: 8,
-          numOfMines: 10,
-          gameType: 'Beginner',
-        };
-        return;
-      case 'intermediate':
-        this.gameSettings = {
-          numOfRows: 16,
-          numOfCols: 16,
-          numOfMines: 40,
-          gameType: 'Intermediate',
-        };
-        return;
-      case 'expert':
-        this.gameSettings = {
-          numOfRows: 16,
-          numOfCols: 30,
-          numOfMines: 99,
-          gameType: 'Expert',
-        };
-        return;
+    const presets = Object.freeze({
+      test: {
+        numOfRows: 5,
+        numOfCols: 5,
+        numOfMines: 1,
+        gameType: 'Test',
+      },
+      beginner: {
+        numOfRows: 8,
+        numOfCols: 8,
+        numOfMines: 10,
+        gameType: 'Beginner',
+      },
+      intermediate: {
+        numOfRows: 16,
+        numOfCols: 16,
+        numOfMines: 40,
+        gameType: 'Intermediate',
+      },
+      expert: {
+        numOfRows: 16,
+        numOfCols: 30,
+        numOfMines: 99,
+        gameType: 'Expert',
+      },
+    });
+    this.gameSettings = presets[mode];
+    if (this.gameSettings === undefined) {
+      throw Error('Bad mode!');
     }
   }
 }

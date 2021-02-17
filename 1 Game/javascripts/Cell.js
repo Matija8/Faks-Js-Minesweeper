@@ -8,12 +8,12 @@ class Cell {
     this.game = game;
     this.style = game.style;
     this.hasMine = false;
-    this.clickStates = Object.freeze({
-      notClicked: 'not-clicked',
-      leftClicked: 'left-clicked',
-      rightClicked: 'right-clicked',
-    });
-    this._clickState = this.clickStates.notClicked;
+    this.clickStates = Object.freeze([
+      'not-clicked',
+      'left-clicked',
+      'right-clicked',
+    ]);
+    this._clickState = 'not-clicked';
     this.adjacent = [];
     this.setListeners();
 
@@ -29,13 +29,10 @@ class Cell {
   }
 
   set clickState(newState) {
-    for (let state in this.clickStates) {
-      if (newState === this.clickStates[state]) {
-        this._clickState = newState;
-        return;
-      }
+    if (!this.clickStates.includes(newState)) {
+      throw Error('Cell set clickState error: Not a valid state: ' + newState);
     }
-    console.log('Cell set clickState error: Not a valid state: ' + newState);
+    this._clickState = newState;
   }
 
   get clickState() {

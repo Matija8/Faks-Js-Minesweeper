@@ -180,25 +180,29 @@ class Game {
         'Super awesome guy (or girl)!'
       );
 
-      let xhr = new XMLHttpRequest();
-      xhr.open('POST', 'http://localhost:8787/highscores');
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhr.onreadystatechange = () => {
-        let DONE = XMLHttpRequest.DONE,
-          OK = 200;
-        if (xhr.readyState === DONE) {
-          if (xhr.status === OK) {
-            console.log(xhr.responseText);
-          } else {
-            console.log('Ajax Error: ' + xhr.status);
-          }
-        }
-      };
-      xhr.send(
-        `userName=${userName}&difficulty=${this.gameType}&score=${this.endTime}`
-      );
+      this.sendWinToServer(userName);
     }, 100);
-    // Send win time and game type to the server (Node.js) via ajax...
+  }
+
+  sendWinToServer(userName) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://localhost:8787/highscores');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = () => {
+      const DONE = XMLHttpRequest.DONE,
+        OK = 200;
+      if (xhr.readyState !== DONE) {
+        return;
+      }
+      if (xhr.status === OK) {
+        console.log(xhr.responseText);
+      } else {
+        console.log('Ajax Error: ' + xhr.status);
+      }
+    };
+    xhr.send(
+      `userName=${userName}&difficulty=${this.gameType}&score=${this.endTime}`
+    );
   }
 
   gameLoss(clickedMine) {
