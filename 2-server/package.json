@@ -8,6 +8,7 @@
     "nodemon": "nodemon",
     "build": "tsc",
     "docker-up": "docker-compose up -d",
+    "docker-attach": "docker-compose logs -f",
     "docker-stop": "docker stop mines-mongo mines-express",
     "docker-ls": "docker ps -a",
     "docker-rm": "docker rm -f mines-mongo mines-express || true",
