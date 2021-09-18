@@ -1,23 +1,35 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, Db } from 'mongodb';
 import util from 'util';
 
 export class MongoDBService {
   private url: string = 'mongodb://root:pitajkonobara@localhost:27018';
   private databaseName: string = 'highscores_db';
-  private client: any = undefined; //:unknown, :MongoClient ?
-  private database: any = undefined;
+  private client: MongoClient | null = null;
+  private _database: Db | null = null;
 
   constructor() {}
 
   async connect() {
-    const connect = util.promisify(MongoClient.connect);
-    //TODO: UnhandledPromiseRejectionWarning.
-    this.client = await connect(this.url); // { useUnifiedTopology: true } ?
-    this.database = this.client.db(this.databaseName);
+    try {
+      const connect = util.promisify(MongoClient.connect);
+      this.client = (await connect(this.url)) as MongoClient;
+      this._database = this.client.db(this.databaseName);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  private get database(): Db {
+    if (!this._database) {
+      throw Error('Database not present!');
+    }
+    return this._database;
   }
 
   disconnect() {
-    this.client.close();
+    if (this.client) {
+      this.client.close();
+    }
   }
 
   find(collection: string, parameters = {}) {

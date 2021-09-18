@@ -35,10 +35,11 @@ export class Highscore {
 
   public static validUserName(name: string): boolean {
     //TODO: security checks?
-    if (name.trim() === '') {
+    if (typeof name !== 'string') {
       return false;
     }
-    return true;
+    const trimmedName = name.trim();
+    return trimmedName === name && trimmedName !== '';
   }
 
   public static validDifficulty(difficulty: string): boolean {
@@ -48,16 +49,10 @@ export class Highscore {
       Intermediate: 3,
       Expert: 4,
     });
-    if (Object.keys(validDifficulties).includes(difficulty)) {
-      return true;
-    }
-    return false;
+    return Object.keys(validDifficulties).includes(difficulty);
   }
 
   public static validScore(score: number): boolean {
-    if (score > 0) {
-      return true;
-    }
-    return false;
+    return score > 0;
   }
 }
