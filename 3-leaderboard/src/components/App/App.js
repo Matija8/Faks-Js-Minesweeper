@@ -1,9 +1,9 @@
-import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-import "./App.css";
-import WelcomePage from "../WelcomePage";
-import HighscoreList from "../HighscoreList/HighscoreList";
+import './App.css';
+import WelcomePage from '../WelcomePage/WelcomePage';
+import HighscoreList from '../HighscoreList/HighscoreList';
 
 const App = () => (
   <div className="app">
